@@ -1,0 +1,60 @@
+{
+  "name": "astro-compressor",
+  "version": "0.1.0",
+  "description": "A gzip and brotli compressor for Astro",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/sondr3/astro-compressor.git"
+  },
+  "author": "Sondre Nilsen <sondre@eons.io> (https://www.eons.io)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sondr3/astro-compressor/issues"
+  },
+  "homepage": "https://github.com/sondr3/astro-compressor#readme",
+  "prettier": "@sondr3/prettier",
+  "keywords": [
+    "astro",
+    "astro-integration",
+    "astro-component",
+    "performance"
+  ],
+  "files": [
+    "dist/**",
+    "CHANGELOG.md",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "tsc --watch --incremental",
+    "build": "rm -rf dist && tsc",
+    "lint": "eslint --cache src",
+    "lint:fix": "eslint --cache --fix src",
+    "format": "prettier --check src",
+    "format:fix": "prettier --write src"
+  },
+  "dependencies": {
+    "globby": "13.1.2"
+  },
+  "devDependencies": {
+    "@sondr3/eslint-config": "0.7.1",
+    "@sondr3/prettier": "0.6.0",
+    "@sondr3/tsconfig": "0.7.0",
+    "@types/node": "18.7.13",
+    "@typescript-eslint/eslint-plugin": "5.35.1",
+    "@typescript-eslint/parser": "5.35.1",
+    "astro": "1.1.1",
+    "eslint": "8.23.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-simple-import-sort": "7.0.0",
+    "eslint-plugin-tsdoc": "0.2.16",
+    "prettier": "2.7.1",
+    "prettier-eslint": "15.0.1",
+    "typescript": "4.8.2"
+  }
+}
