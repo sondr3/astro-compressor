@@ -1,3 +1,15 @@
+## v0.1.1
+
+> 2022-08-27
+
+## Summary
+
+Quick bugfix release for a strat `console.log` that was left accidentally.
+
+### Commits
+
+- [[`375745f`](https://github.com/sondr3/astro-compressor)] Release v0.1.1
+
 ## v0.1.0
 
 > 2022-08-27
