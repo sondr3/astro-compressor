@@ -55,7 +55,7 @@ import compressor from "astro-compressor";
 
 export default defineConfig({
   // ...
-  integrations: [compressor()],
+  integrations: [..., compressor()],
 });
 ```
 
