@@ -1,3 +1,15 @@
+## v0.1.2
+
+> 2022-08-28
+
+## Summary
+
+Fix wording in README.
+
+### Commits
+
+- [[`983215e`](https://github.com/sondr3/astro-compressor)] Update README
+
 ## v0.1.1
 
 > 2022-08-27
