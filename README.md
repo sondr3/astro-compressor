@@ -5,12 +5,11 @@
 </p>
 
 <p align="center">
-    <b>A HTML minifier for Astro</b>
+    <b>A gzip and brotli compressor for Astro</b>
 </p>
 
 - **Simple**: Set it and forget it
-- **Performant**: Uses highly performant libraries to minify
-- **Optimal**: By minifying, the server can serve optimal bundles
+- **Optimal**: By compressing ahead of time, a more performant compression can be performed
 
 <details>
 <summary>Table of Contents</summary>
