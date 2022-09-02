@@ -16,8 +16,9 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: latest
           cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install and build
         run: pnpm install --frozen-lockfile
@@ -29,3 +30,9 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: Publish
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: pnpm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
