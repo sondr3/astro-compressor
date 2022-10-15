@@ -34,7 +34,7 @@ Install via your tool of choice:
 
 ```sh
 # Using NPM
-npm run astro add astro-compressor
+npx astro add astro-compressor
 # Using Yarn
 yarn astro add astro-compressor
 # Using PNPM
