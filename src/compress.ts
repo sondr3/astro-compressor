@@ -1,8 +1,9 @@
-import { globby } from "globby";
 import { createReadStream, createWriteStream } from "node:fs";
 import { hrtime } from "node:process";
 import { promises as stream } from "node:stream";
 import { createBrotliCompress, createGzip } from "node:zlib";
+
+import { globby } from "globby";
 
 import { Logger } from "./logger.js";
 

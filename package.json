@@ -36,25 +36,25 @@
     "format:fix": "prettier --write src"
   },
   "dependencies": {
-    "globby": "13.1.2"
+    "globby": "13.1.3"
   },
   "devDependencies": {
     "@sondr3/eslint-config": "0.7.1",
     "@sondr3/prettier": "0.6.0",
     "@sondr3/tsconfig": "0.7.0",
-    "@types/node": "18.7.13",
-    "@typescript-eslint/eslint-plugin": "5.35.1",
-    "@typescript-eslint/parser": "5.35.1",
-    "astro": "1.1.1",
-    "eslint": "8.23.0",
+    "@types/node": "18.11.18",
+    "@typescript-eslint/eslint-plugin": "5.47.1",
+    "@typescript-eslint/parser": "5.47.1",
+    "astro": "1.7.2",
+    "eslint": "8.30.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "4.2.1",
-    "eslint-plugin-simple-import-sort": "7.0.0",
-    "eslint-plugin-tsdoc": "0.2.16",
-    "prettier": "2.7.1",
+    "eslint-plugin-simple-import-sort": "8.0.0",
+    "eslint-plugin-tsdoc": "0.2.17",
+    "prettier": "2.8.1",
     "prettier-eslint": "15.0.1",
-    "typescript": "4.8.2"
+    "typescript": "4.9.4"
   }
 }
