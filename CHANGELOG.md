@@ -1,3 +1,15 @@
+## v0.1.3
+> 2022-12-27
+
+## Summary
+
+Update dependencies, fix some CI steps.
+
+### Commits
+- [[`28b0d90`](https://github.com/sondr3/astro-compressor)] Fix release CI step
+- [[`acc0b18`](https://github.com/sondr3/astro-compressor)] Update dependencies, fix formatting
+- [[`8a64bff`](https://github.com/sondr3/astro-compressor)] Add publish step on CI pipeline
+
 ## v0.1.2
 
 > 2022-08-28
@@ -16,7 +28,7 @@ Fix wording in README.
 
 ## Summary
 
-Quick bugfix release for a strat `console.log` that was left accidentally.
+Quick bugfix release for a stray `console.log` that was left accidentally.
 
 ### Commits
 
