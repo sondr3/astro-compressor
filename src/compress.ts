@@ -25,11 +25,11 @@ const filterFile = (file: string): boolean => {
   );
 };
 
-export const gzip = async (dir: URL): Promise<void> => {
+export const gzip = async (dir: string): Promise<void> => {
   const start = hrtime.bigint();
 
   let counter = 0;
-  for await (const file of walkDir(dir.pathname)) {
+  for await (const file of walkDir(dir)) {
     counter += 1;
     const source = createReadStream(file);
     const destination = createWriteStream(`${file}.gz`);
@@ -41,11 +41,11 @@ export const gzip = async (dir: URL): Promise<void> => {
   Logger.success(`finished gzip of ${counter} files in ${(end - start) / 1000000n}ms`);
 };
 
-export const brotli = async (dir: URL): Promise<void> => {
+export const brotli = async (dir: string): Promise<void> => {
   const start = hrtime.bigint();
 
   let counter = 0;
-  for await (const file of walkDir(dir.pathname)) {
+  for await (const file of walkDir(dir)) {
     counter += 1;
     const source = createReadStream(file);
     const destination = createWriteStream(`${file}.br`);
