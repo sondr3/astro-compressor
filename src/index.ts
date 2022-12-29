@@ -1,5 +1,6 @@
+import { fileURLToPath } from "node:url";
+
 import type { AstroIntegration } from "astro";
-import { fileURLToPath } from "url";
 
 import { brotli, gzip } from "./compress.js";
 import { Logger } from "./logger.js";
