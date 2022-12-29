@@ -1,6 +1,6 @@
 import { createReadStream, createWriteStream } from "node:fs";
 import { readdir } from "node:fs/promises";
-import { resolve } from "node:path";
+import { extname, resolve } from "node:path";
 import { hrtime } from "node:process";
 import { promises as stream } from "node:stream";
 import { createBrotliCompress, createGzip } from "node:zlib";
@@ -20,8 +20,8 @@ async function* walkDir(dir: string): AsyncGenerator<string> {
 }
 
 const filterFile = (file: string): boolean => {
-  return [".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"].some((ext) =>
-    file.endsWith(ext),
+  return [".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"].some(
+    (ext) => extname(file) == ext,
   );
 };
 
