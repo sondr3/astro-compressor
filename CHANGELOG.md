@@ -1,9 +1,20 @@
+## v0.2.1
+> 2022-12-29
+
+## Summary
+
+Spelling fix and file name filtering change.
+
+### Commits
+- [[`fc44e2a`](https://github.com/sondr3/astro-compressor)] Use extname to get file extension
+- [[`341fd5c`](https://github.com/sondr3/astro-compressor)] Change m -> ms
+
 ## v0.2.0
 > 2022-12-29
 
 ## Summary
 
-Release v0.2.0 is our best yet! Many bugs were squashed, and yet more features added.
+Removal of dependency over using the node standard library.
 
 ### Commits
 - [[`f0840e5`](https://github.com/sondr3/astro-compressor)] Remove globby dependency, use stdlib
