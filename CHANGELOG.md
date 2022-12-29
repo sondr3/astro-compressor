@@ -1,3 +1,13 @@
+## v0.2.0
+> 2022-12-29
+
+## Summary
+
+Release v0.2.0 is our best yet! Many bugs were squashed, and yet more features added.
+
+### Commits
+- [[`f0840e5`](https://github.com/sondr3/astro-compressor)] Remove globby dependency, use stdlib
+
 ## v0.1.3
 > 2022-12-27
 
