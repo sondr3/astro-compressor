@@ -1,3 +1,16 @@
+## v0.2.2
+> 2022-12-29
+
+## Summary
+
+Fix paths for Windows.
+
+### Commits
+- [[`d9d04eb`](https://github.com/sondr3/astro-compressor)] Use fileUrlToPath to fix path on Windows
+- [[`cef27ed`](https://github.com/sondr3/astro-compressor)] Don't force height on badge
+- [[`2fbaa34`](https://github.com/sondr3/astro-compressor)] Use shields.io over badge.fury.io
+- [[`a0f7ba1`](https://github.com/sondr3/astro-compressor)] Update version badge
+
 ## v0.2.1
 > 2022-12-29
 
