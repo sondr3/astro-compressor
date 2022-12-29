@@ -1,7 +1,7 @@
 <h1 align="center">astro-compressor</h1>
 <p align="center">
     <a href="https://github.com/sondr3/astro-compressor/actions"><img alt="GitHub Actions Status" src="https://github.com/sondr3/astro-compressor/workflows/pipeline/badge.svg" /></a>
-    <a href="https://www.npmjs.com/package/astro-compressor"><img alt="NPM" src="https://badge.fury.io/js/astro-compressor.svg" /></a>
+    <a href="https://www.npmjs.com/package/astro-compressor"><img src="https://badge.fury.io/js/astro-compressor.svg" alt="npm version" height="18"></a>
 </p>
 
 <p align="center">
