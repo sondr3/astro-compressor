@@ -25,7 +25,12 @@ const filterFile = (file: string): boolean => {
   );
 };
 
-export const gzip = async (dir: string): Promise<void> => {
+export const gzip = async (dir: string, enabled?: boolean): Promise<void> => {
+  if (!enabled) {
+    Logger.warn("gzip compression disabled, skipping...");
+    return;
+  }
+
   const start = hrtime.bigint();
 
   let counter = 0;
@@ -41,7 +46,12 @@ export const gzip = async (dir: string): Promise<void> => {
   Logger.success(`finished gzip of ${counter} files in ${(end - start) / 1000000n}ms`);
 };
 
-export const brotli = async (dir: string): Promise<void> => {
+export const brotli = async (dir: string, enabled?: boolean): Promise<void> => {
+  if (!enabled) {
+    Logger.warn("brotli compression disabled, skipping...");
+    return;
+  }
+
   const start = hrtime.bigint();
 
   let counter = 0;
