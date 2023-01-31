@@ -20,6 +20,7 @@
 - [Quickstart](#quickstart)
 - [NOTE](#NOTE)
 - [Usage](#usage)
+  - [Configuration](#configuration)
 - [License](#license)
 </details>
 
@@ -55,6 +56,21 @@ import compressor from "astro-compressor";
 export default defineConfig({
   // ...
   integrations: [..., compressor()],
+});
+```
+
+## Configuration
+
+You can also optionally enable and/or disable either the gzip or brotli compression by
+passing an options object to the compressor:
+
+```js
+import { defineConfig } from "astro/config";
+import compressor from "astro-compressor";
+
+export default defineConfig({
+  // ...
+  integrations: [..., compressor({ gzip: true, brotli: false })],
 });
 ```
 
