@@ -33,7 +33,7 @@
     "lint": "eslint --cache src",
     "lint:fix": "eslint --cache --fix src",
     "format": "prettier --check src",
-    "format:fix": "prettier --write src"
+    "format:fix": "prettier --cache --write src"
   },
   "devDependencies": {
     "@sondr3/eslint-config": "0.7.1",
