@@ -88,6 +88,8 @@ export default defineConfig({
 });
 ```
 
+By default the `fileExtensions` array is `[".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"]`.
+
 # License
 
 MIT.
