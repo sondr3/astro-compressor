@@ -1,3 +1,20 @@
+## v0.4.0
+
+> 2023-03-20
+
+## Summary
+
+Add configurable file extensions to options, allowing the user to change the default
+files that are compressed.
+
+### Commits
+
+- [[`02181b8`](https://github.com/sondr3/astro-compressor)] Add file extension configuration to README
+- [[`4015722`](https://github.com/sondr3/astro-compressor)] Make compressed file extensions configurable
+- [[`f3355d1`](https://github.com/sondr3/astro-compressor)] Bump dependencies
+- [[`53f98e7`](https://github.com/sondr3/astro-compressor)] Bump packages
+- [[`102fe95`](https://github.com/sondr3/astro-compressor)] Cache prettier
+
 ## v0.3.0
 
 > 2023-01-31
