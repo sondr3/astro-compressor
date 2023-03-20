@@ -7,25 +7,27 @@ import { createBrotliCompress, createGzip } from "node:zlib";
 
 import { Logger } from "./logger.js";
 
-async function* walkDir(dir: string): AsyncGenerator<string> {
+async function* walkDir(dir: string, extensions: Array<string>): AsyncGenerator<string> {
   const entries = await readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
     const name = resolve(dir, entry.name);
     if (entry.isDirectory()) {
-      yield* walkDir(name);
-    } else if (filterFile(entry.name)) {
+      yield* walkDir(name, extensions);
+    } else if (filterFile(entry.name, extensions)) {
       yield name;
     }
   }
 }
 
-const filterFile = (file: string): boolean => {
-  return [".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"].some(
-    (ext) => extname(file) == ext,
-  );
+const filterFile = (file: string, extensions: Array<string>): boolean => {
+  return extensions.some((ext) => extname(file) == ext);
 };
 
-export const gzip = async (dir: string, enabled?: boolean): Promise<void> => {
+export const gzip = async (
+  dir: string,
+  extensions: Array<string>,
+  enabled?: boolean,
+): Promise<void> => {
   if (!enabled) {
     Logger.warn("gzip compression disabled, skipping...");
     return;
@@ -34,7 +36,7 @@ export const gzip = async (dir: string, enabled?: boolean): Promise<void> => {
   const start = hrtime.bigint();
 
   let counter = 0;
-  for await (const file of walkDir(dir)) {
+  for await (const file of walkDir(dir, extensions)) {
     counter += 1;
     const source = createReadStream(file);
     const destination = createWriteStream(`${file}.gz`);
@@ -46,7 +48,11 @@ export const gzip = async (dir: string, enabled?: boolean): Promise<void> => {
   Logger.success(`finished gzip of ${counter} files in ${(end - start) / 1000000n}ms`);
 };
 
-export const brotli = async (dir: string, enabled?: boolean): Promise<void> => {
+export const brotli = async (
+  dir: string,
+  extensions: Array<string>,
+  enabled?: boolean,
+): Promise<void> => {
   if (!enabled) {
     Logger.warn("brotli compression disabled, skipping...");
     return;
@@ -55,7 +61,7 @@ export const brotli = async (dir: string, enabled?: boolean): Promise<void> => {
   const start = hrtime.bigint();
 
   let counter = 0;
-  for await (const file of walkDir(dir)) {
+  for await (const file of walkDir(dir, extensions)) {
     counter += 1;
     const source = createReadStream(file);
     const destination = createWriteStream(`${file}.br`);

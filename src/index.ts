@@ -5,14 +5,18 @@ import type { AstroIntegration } from "astro";
 import { brotli, gzip } from "./compress.js";
 import { Logger } from "./logger.js";
 
+const defaultFileExtensions = [".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"];
+
 interface Options {
   gzip?: boolean;
   brotli?: boolean;
+  fileExtensions?: Array<string>;
 }
 
-const defaultOptions: Options = {
+const defaultOptions: Required<Options> = {
   gzip: true,
   brotli: true,
+  fileExtensions: defaultFileExtensions,
 };
 
 // eslint-disable-next-line import/no-default-export
@@ -24,7 +28,10 @@ export default function (opts: Options = defaultOptions): AstroIntegration {
     hooks: {
       "astro:build:done": async ({ dir }) => {
         const path = fileURLToPath(dir);
-        await Promise.allSettled([gzip(path, options.gzip), brotli(path, options.brotli)]);
+        await Promise.allSettled([
+          gzip(path, options.fileExtensions, options.gzip),
+          brotli(path, options.fileExtensions, options.brotli),
+        ]);
         Logger.success("Compression finished\n");
       },
     },
