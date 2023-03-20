@@ -8,8 +8,11 @@ import { Logger } from "./logger.js";
 const defaultFileExtensions = [".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"];
 
 interface Options {
+  /** Enable gzip compression */
   gzip?: boolean;
+  /** Enable brotli compression */
   brotli?: boolean;
+  /** Extensions to compress, must be in the format `.html`, `.css` etc */
   fileExtensions?: Array<string>;
 }
 

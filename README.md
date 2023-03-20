@@ -74,6 +74,20 @@ export default defineConfig({
 });
 ```
 
+Or customize the file formats that will be compressed:
+
+```js
+import { defineConfig } from "astro/config";
+import compressor from "astro-compressor";
+
+export default defineConfig({
+  // ...
+  integrations: [..., compressor({
+    fileExtensions: [".html"] // only compress HTML files
+  })],
+});
+```
+
 # License
 
 MIT.
