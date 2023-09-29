@@ -1,3 +1,19 @@
+## v0.4.1
+
+> 2023-09-29
+
+## Summary
+
+Documentation updates, no functional changes.
+
+### Commits
+
+- [[`7750c7e`](https://github.com/sondr3/astro-compressor)] Add note about SSR not working
+- [[`ac15c66`](https://github.com/sondr3/astro-compressor)] Bump actions/checkout from 3 to 4
+- [[`7099290`](https://github.com/sondr3/astro-compressor)] Bump pnpm/action-setup from 2.3.0 to 2.4.0
+- [[`e554525`](https://github.com/sondr3/astro-compressor)] Bump pnpm/action-setup from 2.2.4 to 2.3.0
+- [[`ad26a44`](https://github.com/sondr3/astro-compressor)] Add defaults for fileExtensions to README
+
 ## v0.4.0
 
 > 2023-03-20
