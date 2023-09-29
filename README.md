@@ -26,8 +26,11 @@
 
 # NOTE
 
-**Important:** It is vital that this is the last integration in the `integrations`
-property. Otherwise some files might not get compressed.
+1. **Important:** It is vital that this is the last integration in the `integrations`
+   property. Otherwise some files might not get compressed.
+2. **Note:** This only works for static exports, SSR does not export assets that can
+   be compressed ahead of time so you need to solve it with middleware. See [this](https://github.com/sondr3/astro-compressor/issues/13#issuecomment-1739721634)
+   for more context and a partial solution.
 
 # Quickstart
 
