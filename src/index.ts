@@ -22,7 +22,6 @@ const defaultOptions: Required<Options> = {
 	fileExtensions: defaultFileExtensions,
 };
 
-// eslint-disable-next-line import/no-default-export
 export default function (opts: Options = defaultOptions): AstroIntegration {
 	const options = { ...defaultOptions, ...opts };
 
