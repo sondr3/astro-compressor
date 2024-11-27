@@ -14,12 +14,15 @@ interface Options {
 	brotli?: boolean;
 	/** Extensions to compress, must be in the format `.html`, `.css` etc */
 	fileExtensions?: Array<string>;
+	/** Number of files to batch process */
+	batchSize?: number;
 }
 
 const defaultOptions: Required<Options> = {
 	gzip: true,
 	brotli: true,
 	fileExtensions: defaultFileExtensions,
+	batchSize: 10,
 };
 
 export default function (opts: Options = defaultOptions): AstroIntegration {
@@ -31,8 +34,8 @@ export default function (opts: Options = defaultOptions): AstroIntegration {
 			"astro:build:done": async ({ dir }) => {
 				const path = fileURLToPath(dir);
 				await Promise.allSettled([
-					gzip(path, options.fileExtensions, options.gzip),
-					brotli(path, options.fileExtensions, options.brotli),
+					gzip(path, options.fileExtensions, options.gzip, options.batchSize),
+					brotli(path, options.fileExtensions, options.brotli, options.batchSize),
 				]);
 				logger.success("Compression finished\n");
 			},
