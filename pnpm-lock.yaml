@@ -11,9 +11,12 @@ importers:
       '@biomejs/biome':
         specifier: 1.9.4
         version: 1.9.4
-      '@sondr3/tsconfig':
-        specifier: 0.8.0
-        version: 0.8.0
+      '@tsconfig/recommended':
+        specifier: 1.0.8
+        version: 1.0.8
+      '@tsconfig/strictest':
+        specifier: 2.0.5
+        version: 2.0.5
       '@types/node':
         specifier: 18.15.3
         version: 18.15.3
@@ -24,8 +27,8 @@ importers:
         specifier: 1.8.4
         version: 1.8.4
       typescript:
-        specifier: 4.9.5
-        version: 4.9.5
+        specifier: 5.7.2
+        version: 5.7.2
       vitest:
         specifier: 2.1.6
         version: 2.1.6(@types/node@18.15.3)
@@ -641,8 +644,11 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@sondr3/tsconfig@0.8.0':
-    resolution: {integrity: sha512-8LW4k/nJqr1AMj/3sav8IJlya5HYrEml+Z3mUqKWm87StB9PPwDrcKiE8uVMnVnv/gDPcTgDO2uBPr+gwdWlUQ==}
+  '@tsconfig/recommended@1.0.8':
+    resolution: {integrity: sha512-TotjFaaXveVUdsrXCdalyF6E5RyG6+7hHHQVZonQtdlk1rJZ1myDIvPUUKPhoYv+JAzThb2lQJh9+9ZfF46hsA==}
+
+  '@tsconfig/strictest@2.0.5':
+    resolution: {integrity: sha512-ec4tjL2Rr0pkZ5hww65c+EEPYwxOi4Ryv+0MtjeaSQRJyq322Q27eOQiFbuNgw2hpL4hB1/W/HBGk3VKS43osg==}
 
   '@types/babel__core@7.20.0':
     resolution: {integrity: sha512-+n8dL/9GWblDO0iU6eZAwEIJVr5DWigtle+Q6HLOrh/pdbXOhOtqzq8VPPE2zvNJzSKY4vH/z3iT3tn0A3ypiQ==}
@@ -1926,14 +1932,9 @@ packages:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
     engines: {node: '>=12.20'}
 
-  typescript@4.9.5:
-    resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
-    engines: {node: '>=4.2.0'}
-    hasBin: true
-
-  typescript@5.0.2:
-    resolution: {integrity: sha512-wVORMBGO/FAs/++blGNeAVdbNKtIh1rbBL2EyQ1+J9lClJ93KiiKe8PmFIVdXhHcyv44SL9oglmfeSsndo0jRw==}
-    engines: {node: '>=12.20'}
+  typescript@5.7.2:
+    resolution: {integrity: sha512-i5t66RHxDvVN40HfDd1PsEThGNnlMCMT3jMUuoh9/0TaqWevNontacunWyN02LA9/fIbEWlcHZcgTKb9QoaLfg==}
+    engines: {node: '>=14.17'}
     hasBin: true
 
   undici@5.20.0:
@@ -2687,7 +2688,9 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.27.4':
     optional: true
 
-  '@sondr3/tsconfig@0.8.0': {}
+  '@tsconfig/recommended@1.0.8': {}
+
+  '@tsconfig/strictest@2.0.5': {}
 
   '@types/babel__core@7.20.0':
     dependencies:
@@ -2876,7 +2879,7 @@ snapshots:
       strip-ansi: 7.0.1
       supports-esm: 1.0.0
       tsconfig-resolver: 3.0.1
-      typescript: 5.0.2
+      typescript: 5.7.2
       unist-util-visit: 4.1.2
       vfile: 5.3.7
       vite: 4.2.0(@types/node@18.15.3)
@@ -4217,9 +4220,7 @@ snapshots:
 
   type-fest@2.19.0: {}
 
-  typescript@4.9.5: {}
-
-  typescript@5.0.2: {}
+  typescript@5.7.2: {}
 
   undici@5.20.0:
     dependencies:

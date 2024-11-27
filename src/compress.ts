@@ -41,7 +41,7 @@ export const gzip = async (dir: string, extensions: Array<string>, enabled?: boo
 	}
 
 	const end = hrtime.bigint();
-	logger.success(`finished gzip of ${counter} files in ${(end - start) / 1000000n}ms`);
+	logger.success(`finished gzip of ${counter} files in ${(end - start) / BigInt(1000000)}ms`);
 };
 
 export const brotli = async (dir: string, extensions: Array<string>, enabled?: boolean): Promise<void> => {
@@ -62,5 +62,5 @@ export const brotli = async (dir: string, extensions: Array<string>, enabled?: b
 	}
 
 	const end = hrtime.bigint();
-	logger.success(`finished brotli of ${counter} files in ${(end - start) / 1000000n}ms`);
+	logger.success(`finished brotli of ${counter} files in ${(end - start) / BigInt(1000000)}ms`);
 };
