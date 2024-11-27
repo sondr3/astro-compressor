@@ -31,6 +31,11 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Test
+        run: |
+          cd test && pnpm install --frozen-lockfile
+          cd .. && pnpm test
+
       - name: Publish
         if: startsWith(github.ref, 'refs/tags/v')
         run: pnpm publish --no-git-checks
