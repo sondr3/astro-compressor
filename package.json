@@ -20,6 +20,7 @@
 	"scripts": {
 		"dev": "tsc --watch --incremental",
 		"build": "rm -rf dist && tsc",
+		"test": "vitest",
 		"prepare": "lefthook install",
 		"check": "biome check",
 		"fix": "biome check --write"
@@ -30,6 +31,7 @@
 		"@types/node": "18.15.3",
 		"astro": "2.1.3",
 		"lefthook": "1.8.4",
-		"typescript": "4.9.5"
+		"typescript": "4.9.5",
+		"vitest": "2.1.6"
 	}
 }
