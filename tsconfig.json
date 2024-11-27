@@ -1,12 +1,12 @@
 {
-  "extends": "@sondr3/tsconfig",
-  "compilerOptions": {
-    "lib": ["ES2020"],
-    "skipLibCheck": true,
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "dist"
-  },
-  "include": ["src"],
-  "exclude": ["coverage", "node_modules", "dist"]
+	"extends": "@sondr3/tsconfig",
+	"compilerOptions": {
+		"lib": ["ES2020"],
+		"skipLibCheck": true,
+		"declaration": true,
+		"declarationMap": true,
+		"outDir": "dist"
+	},
+	"include": ["src"],
+	"exclude": ["coverage", "node_modules", "dist"]
 }

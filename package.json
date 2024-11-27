@@ -1,57 +1,35 @@
 {
-  "name": "astro-compressor",
-  "version": "0.4.1",
-  "description": "A gzip and brotli compressor for Astro",
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/sondr3/astro-compressor.git"
-  },
-  "author": "Sondre Nilsen <sondre@eons.io> (https://www.eons.io)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/sondr3/astro-compressor/issues"
-  },
-  "homepage": "https://github.com/sondr3/astro-compressor#readme",
-  "prettier": "@sondr3/prettier",
-  "keywords": [
-    "astro",
-    "astro-integration",
-    "astro-component",
-    "performance"
-  ],
-  "files": [
-    "dist/**",
-    "CHANGELOG.md",
-    "README.md"
-  ],
-  "scripts": {
-    "dev": "tsc --watch --incremental",
-    "build": "rm -rf dist && tsc",
-    "lint": "eslint --cache src",
-    "lint:fix": "eslint --cache --fix src",
-    "format": "prettier --check src",
-    "format:fix": "prettier --cache --write src"
-  },
-  "devDependencies": {
-    "@sondr3/eslint-config": "0.7.1",
-    "@sondr3/prettier": "0.6.0",
-    "@sondr3/tsconfig": "0.8.0",
-    "@types/node": "18.15.3",
-    "@typescript-eslint/eslint-plugin": "5.55.0",
-    "@typescript-eslint/parser": "5.55.0",
-    "astro": "2.1.3",
-    "eslint": "8.36.0",
-    "eslint-config-prettier": "8.7.0",
-    "eslint-plugin-import": "2.27.5",
-    "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-prettier": "4.2.1",
-    "eslint-plugin-simple-import-sort": "10.0.0",
-    "eslint-plugin-tsdoc": "0.2.17",
-    "prettier": "2.8.5",
-    "prettier-eslint": "15.0.1",
-    "typescript": "4.9.5"
-  }
+	"name": "astro-compressor",
+	"version": "0.4.1",
+	"description": "A gzip and brotli compressor for Astro",
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/sondr3/astro-compressor.git"
+	},
+	"author": "Sondre Nilsen <sondre@eons.io> (https://www.eons.io)",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/sondr3/astro-compressor/issues"
+	},
+	"homepage": "https://github.com/sondr3/astro-compressor#readme",
+	"keywords": ["astro", "astro-integration", "astro-component", "performance"],
+	"files": ["dist/**", "CHANGELOG.md", "README.md"],
+	"scripts": {
+		"dev": "tsc --watch --incremental",
+		"build": "rm -rf dist && tsc",
+		"prepare": "lefthook install",
+		"check": "biome check",
+		"fix": "biome check --write"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@sondr3/tsconfig": "0.8.0",
+		"@types/node": "18.15.3",
+		"astro": "2.1.3",
+		"lefthook": "1.8.4",
+		"typescript": "4.9.5"
+	}
 }

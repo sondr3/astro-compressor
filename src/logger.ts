@@ -1,30 +1,27 @@
 const COLORS = {
-  reset: "\x1b[0m",
-  red: "\x1b[31m",
-  green: "\x1b[32m",
-  yellow: "\x1b[33m",
+	reset: "\x1b[0m",
+	red: "\x1b[31m",
+	green: "\x1b[32m",
+	yellow: "\x1b[33m",
 } as const;
 
-export class Logger {
-  private static format(msg: string, prefix = ""): string {
-    const start = prefix;
-    const end = prefix ? COLORS.reset : "";
-    return `${start}astro-compressor:${end} ${msg}`;
-  }
+const format = (msg: string, prefix = ""): string => {
+	const end = prefix ? COLORS.reset : "";
+	return `${prefix}astro-compressor:${end} ${msg}`;
+};
 
-  static info(msg: string) {
-    console.info(this.format(msg));
-  }
+export const info = (msg: string) => {
+	console.info(format(msg));
+};
 
-  static success(msg: string) {
-    console.log(this.format(msg, COLORS.green));
-  }
+export const success = (msg: string) => {
+	console.log(format(msg, COLORS.green));
+};
 
-  static warn(msg: string) {
-    console.warn(this.format(msg, COLORS.yellow));
-  }
+export const warn = (msg: string) => {
+	console.warn(format(msg, COLORS.yellow));
+};
 
-  static error(msg: string) {
-    console.error(this.format(msg, COLORS.red));
-  }
-}
+export const error = (msg: string) => {
+	console.error(format(msg, COLORS.red));
+};

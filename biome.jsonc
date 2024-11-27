@@ -1,0 +1,37 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+	"files": {
+		"ignore": ["node_modules", "dist", "coverage"]
+	},
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"defaultBranch": "main"
+	},
+	"organizeImports": {
+		"enabled": true
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"lineWidth": 120
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true
+		}
+	},
+	"overrides": [
+		{
+			"include": ["**/*.ts"],
+			"linter": {
+				"rules": {
+					"complexity": {
+						"useLiteralKeys": "off"
+					}
+				}
+			}
+		}
+	]
+}
