@@ -5,7 +5,7 @@ import { hrtime } from "node:process";
 import { promises as stream } from "node:stream";
 import { createBrotliCompress, createGzip } from "node:zlib";
 
-import * as logger from "./logger.js";
+import type { AstroIntegrationLogger } from "astro";
 
 interface CompressionOptions {
 	dir: string;
@@ -34,6 +34,7 @@ const compress = async <T extends NodeJS.WritableStream>(
 	name: string,
 	compressedFileNames: string,
 	compressor: () => T,
+	logger: AstroIntegrationLogger,
 	{ dir, extensions, batchSize, enabled }: CompressionOptions,
 ): Promise<void> => {
 	if (!enabled) {
@@ -60,23 +61,25 @@ const compress = async <T extends NodeJS.WritableStream>(
 	}
 
 	const end = hrtime.bigint();
-	logger.success(`finished ${name} of ${files.length} files in ${(end - start) / BigInt(1000000)}ms`);
+	logger.info(`${name.padEnd(8, " ")} compressed ${files.length} files in ${(end - start) / BigInt(1000000)}ms`);
 };
 
 export const gzip = async (
 	dir: string,
+	logger: AstroIntegrationLogger,
 	extensions: Array<string>,
 	enabled?: boolean,
 	batchSize = 10,
 ): Promise<void> => {
-	await compress("gzip", "gz", createGzip.bind({ level: 9 }), { dir, extensions, enabled, batchSize });
+	await compress("gzip", "gz", createGzip.bind({ level: 9 }), logger, { dir, extensions, enabled, batchSize });
 };
 
 export const brotli = async (
 	dir: string,
+	logger: AstroIntegrationLogger,
 	extensions: Array<string>,
 	enabled?: boolean,
 	batchSize = 10,
 ): Promise<void> => {
-	await compress("brotli", "br", createBrotliCompress, { dir, extensions, enabled, batchSize });
+	await compress("brotli", "br", createBrotliCompress, logger, { dir, extensions, enabled, batchSize });
 };

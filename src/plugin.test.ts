@@ -9,8 +9,8 @@ test("astro build outputs expected log", () => {
 		cwd: path.join(process.cwd(), "test"),
 	});
 
-	expect(build.stdout).toContain("finished gzip of 2 files");
-	expect(build.stdout).toContain("finished brotli of 2 files");
+	expect(build.stdout).toContain("[astro-compressor] gzip     compressed 2 files");
+	expect(build.stdout).toContain("[astro-compressor] brotli   compressed 2 files");
 	expect(build.stderr).toBeFalsy();
 	expect(build.status).toBe(0);
 });
