@@ -1,3 +1,19 @@
+## v1.1.0
+> 2025-07-28
+
+## Summary
+
+Thanks to @Alex-1701, `astro-compressor` now also supports [`zstd`](https://caniuse.com/?search=zstd) compression.
+
+### Commits
+- [[`c3082cc`](https://github.com/sondr3/astro-compressor/commit/c3082cc)] Update README, set 'engines' field in package.json
+- [[`f851c2b`](https://github.com/sondr3/astro-compressor/commit/f851c2b)] Add lefthook to approved builds
+- [[`b644541`](https://github.com/sondr3/astro-compressor/commit/b644541)] Infer pnpm version from package.json
+- [[`31f61a0`](https://github.com/sondr3/astro-compressor/commit/31f61a0)] Upgrade dependencies
+- [[`9110521`](https://github.com/sondr3/astro-compressor/commit/9110521)] Add zstd (#19)
+- [[`4b1e3c3`](https://github.com/sondr3/astro-compressor/commit/4b1e3c3)] Bump pnpm/action-setup from 4.0.0 to 4.1.0
+- [[`a69e499`](https://github.com/sondr3/astro-compressor/commit/a69e499)] Only publish from one CI
+
 ## v1.0.0
 
 > 2024-11-28
