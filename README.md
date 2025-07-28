@@ -10,6 +10,7 @@
 
 - **Simple**: Set it and forget it
 - **Optimal**: By compressing ahead of time, a more performant compression can be performed
+- **All the compression**: `brotli`, `zstd`, `gzip`, oh my
 
 <details>
 <summary>Table of Contents</summary>
@@ -24,13 +25,8 @@
 - [License](#license)
 </details>
 
-# NOTE
-
-1. **Important:** It is important that this is the last integration in the `integrations`
-   property to ensure all the generated files are compressed.
-2. **Note:** This only works for static exports, SSR does not export assets that can
-   be compressed ahead of time so you need to solve it with middleware. See [this](https://github.com/sondr3/astro-compressor/issues/13#issuecomment-1739721634)
-   for more context and a partial solution.
+> [!NOTE]
+> This only works for static exports, SSR does not export assets that can be compressed ahead of time so you need to solve it with middleware. See [this](https://github.com/sondr3/astro-compressor/issues/13#issuecomment-1739721634) for more context and a partial solution.
 
 # Quickstart
 
@@ -46,6 +42,9 @@ pnpm astro add astro-compressor
 ```
 
 To compress your files, simply run `pnpm build` and look for the compression messages in the build log.
+
+> [!IMPORTANT]
+> It is important that this is the last integration in the `integrations` property to ensure all the generated files are compressed.
 
 # Usage
 
