@@ -3,7 +3,7 @@ import { readdir } from "node:fs/promises";
 import { extname, resolve } from "node:path";
 import { hrtime } from "node:process";
 import { promises as stream } from "node:stream";
-import { createBrotliCompress, createGzip } from "node:zlib";
+import { createBrotliCompress, createGzip, createZstdCompress } from "node:zlib";
 
 import type { AstroIntegrationLogger } from "astro";
 
@@ -82,4 +82,14 @@ export const brotli = async (
 	batchSize = 10,
 ): Promise<void> => {
 	await compress("brotli", "br", createBrotliCompress, logger, { dir, extensions, enabled, batchSize });
+};
+
+export const zstd = async (
+	dir: string,
+	logger: AstroIntegrationLogger,
+	extensions: Array<string>,
+	enabled?: boolean,
+	batchSize = 10,
+): Promise<void> => {
+	await compress("zstd", "zst", createZstdCompress, logger, { dir, extensions, enabled, batchSize });
 };

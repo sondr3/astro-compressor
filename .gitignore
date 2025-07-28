@@ -143,3 +143,5 @@ dist
 # SvelteKit build / generate output
 .svelte-kit
 
+# macOS-specific files
+.DS_Store
