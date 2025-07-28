@@ -38,7 +38,7 @@ export default function (opts: Options = defaultOptions): AstroIntegration {
 				await Promise.allSettled([
 					gzip(path, logger, options.fileExtensions, options.gzip, options.batchSize),
 					brotli(path, logger, options.fileExtensions, options.brotli, options.batchSize),
-					zstd(path, logger, options.fileExtensions, options.brotli, options.batchSize),
+					zstd(path, logger, options.fileExtensions, options.zstd, options.batchSize),
 				]);
 				logger.info("Compression finished\n");
 			},
