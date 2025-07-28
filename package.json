@@ -15,8 +15,17 @@
 		"url": "https://github.com/sondr3/astro-compressor/issues"
 	},
 	"homepage": "https://github.com/sondr3/astro-compressor#readme",
-	"keywords": ["astro", "astro-integration", "astro-component", "performance"],
-	"files": ["dist/**", "CHANGELOG.md", "README.md"],
+	"keywords": [
+		"astro",
+		"astro-integration",
+		"astro-component",
+		"performance"
+	],
+	"files": [
+		"dist/**",
+		"CHANGELOG.md",
+		"README.md"
+	],
 	"scripts": {
 		"dev": "tsc --watch --incremental",
 		"build": "rm -rf dist && tsc",
@@ -26,13 +35,14 @@
 		"fix": "biome check --write"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"@tsconfig/recommended": "1.0.8",
+		"@biomejs/biome": "2.1.2",
+		"@tsconfig/recommended": "1.0.10",
 		"@tsconfig/strictest": "2.0.5",
-		"@types/node": "22.15.0",
-		"astro": "4.16.16",
-		"lefthook": "1.8.4",
-		"typescript": "5.7.2",
-		"vitest": "2.1.6"
-	}
+		"@types/node": "24.1.0",
+		"astro": "5.12.4",
+		"lefthook": "1.12.2",
+		"typescript": "5.8.3",
+		"vitest": "3.2.4"
+	},
+	"packageManager": "pnpm@10.14.0-0+sha512.2cd47a0cbf5f1d1de7693a88307a0ede5be94e0d3b34853d800ee775efbea0650cb562b77605ec80bc8d925f5cd27c4dfe8bb04d3a0b76090784c664450d32d6"
 }
