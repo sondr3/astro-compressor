@@ -6,6 +6,9 @@ jobs:
   pipeline:
     name: pipeline
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     strategy:
       matrix:
         node: ["latest", "lts/*"]
@@ -38,3 +41,4 @@ jobs:
         run: pnpm publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
