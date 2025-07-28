@@ -91,5 +91,5 @@ export const zstd = async (
 	enabled?: boolean,
 	batchSize = 10,
 ): Promise<void> => {
-	await compress("zstd", "zs", createZstdCompress, logger, { dir, extensions, enabled, batchSize });
+	await compress("zstd", "zst", createZstdCompress, logger, { dir, extensions, enabled, batchSize });
 };
