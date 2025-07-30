@@ -3,7 +3,7 @@ import { readdir } from "node:fs/promises";
 import { extname, resolve } from "node:path";
 import { hrtime } from "node:process";
 import { promises as stream } from "node:stream";
-import { createBrotliCompress, createGzip, createZstdCompress } from "node:zlib";
+import * as zlib from "node:zlib";
 
 import type { AstroIntegrationLogger } from "astro";
 
@@ -71,7 +71,7 @@ export const gzip = async (
 	enabled?: boolean,
 	batchSize = 10,
 ): Promise<void> => {
-	await compress("gzip", "gz", createGzip.bind({ level: 9 }), logger, { dir, extensions, enabled, batchSize });
+	await compress("gzip", "gz", zlib.createGzip.bind({ level: 9 }), logger, { dir, extensions, enabled, batchSize });
 };
 
 export const brotli = async (
@@ -81,7 +81,7 @@ export const brotli = async (
 	enabled?: boolean,
 	batchSize = 10,
 ): Promise<void> => {
-	await compress("brotli", "br", createBrotliCompress, logger, { dir, extensions, enabled, batchSize });
+	await compress("brotli", "br", zlib.createBrotliCompress, logger, { dir, extensions, enabled, batchSize });
 };
 
 export const zstd = async (
@@ -91,5 +91,9 @@ export const zstd = async (
 	enabled?: boolean,
 	batchSize = 10,
 ): Promise<void> => {
-	await compress("zstd", "zst", createZstdCompress, logger, { dir, extensions, enabled, batchSize });
+	if (typeof zlib.createZstdCompress !== "function") {
+		logger.warn("zstd compression is not supported in this Node.js version.");
+		return;
+	}
+	await compress("zstd", "zst", zlib.createZstdCompress, logger, { dir, extensions, enabled, batchSize });
 };
