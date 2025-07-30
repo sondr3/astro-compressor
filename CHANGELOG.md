@@ -1,3 +1,14 @@
+## v1.1.1
+> 2025-07-30
+
+## Summary
+
+Bug fix for gracefully handling Node versions without zstd compression.
+
+### Commits
+- [[`9855701`](https://github.com/sondr3/astro-compressor/commit/9855701)] Gracefully fall back when zstd is not supported
+- [[`9fdc219`](https://github.com/sondr3/astro-compressor/commit/9fdc219)] Set the engines to proper versions
+
 ## v1.1.0
 > 2025-07-28
 

@@ -1,6 +1,6 @@
 {
 	"name": "astro-compressor",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "A gzip and brotli compressor for Astro",
 	"type": "module",
 	"main": "./dist/index.js",
