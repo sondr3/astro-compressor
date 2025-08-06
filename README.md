@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-    <b>A gzip and brotli compressor for Astro</b>
+    <b>A gzip, brotli and zstd compressor for Astro</b>
 </p>
 
 - **Simple**: Set it and forget it
@@ -90,7 +90,7 @@ export default defineConfig({
 });
 ```
 
-By default the `fileExtensions` array is `[".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"]`.
+By default, the `fileExtensions` array is `[".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"]`.
 
 # License
 
