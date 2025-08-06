@@ -1,3 +1,13 @@
+## v1.1.2
+> 2025-08-06
+
+## Summary
+
+Documentation update to mention `zstd` compression alongside other compression algorithms.
+
+### Commits
+- [[`c9d3fd7`](https://github.com/sondr3/astro-compressor/commit/c9d3fd7)] Mention zstd alongside other compression algorithms
+
 ## v1.1.1
 > 2025-07-30
 
