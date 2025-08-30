@@ -1,10 +1,10 @@
 {
-	"extends": ["@tsconfig/recommended/tsconfig.json", "@tsconfig/strictest/tsconfig.json"],
+	"extends": [
+		"@tsconfig/recommended/tsconfig.json",
+		"@tsconfig/strictest/tsconfig.json",
+		"@tsconfig/node22/tsconfig.json"
+	],
 	"compilerOptions": {
-		"lib": ["ES2020"],
-		"target": "ES2020",
-		"module": "NodeNext",
-		"moduleResolution": "nodenext",
 		"noUncheckedSideEffectImports": true,
 		"declaration": true,
 		"declarationMap": true,
