@@ -10,6 +10,7 @@
 
 - **Simple**: Set it and forget it
 - **Optimal**: By compressing ahead of time, a more performant compression can be performed
+- **Configurable**: Allows full configuration for those that require it
 - **All the compression**: `brotli`, `zstd`, `gzip`, oh my
 
 <details>
@@ -63,6 +64,8 @@ export default defineConfig({
 
 ## Configuration
 
+### Enabling
+
 You can also optionally enable and/or disable either the gzip or brotli compression by
 passing an options object to the compressor:
 
@@ -75,6 +78,23 @@ export default defineConfig({
   integrations: [..., compressor({ gzip: true, brotli: false })],
 });
 ```
+
+### Advanced settings
+
+If the default settings are not to your liking you can also configure the various
+options for each compressor directly instead:
+
+```js
+import { defineConfig } from "astro/config";
+import compressor from "astro-compressor";
+
+export default defineConfig({
+  // ...
+  integrations: [..., compressor({ gzip: { level: 6 }, brotli: { chunkSize: 16 * 512 } })],
+});
+```
+
+### File handling
 
 Or customize the file formats that will be compressed:
 
