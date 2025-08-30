@@ -9,7 +9,7 @@
 		"type": "git",
 		"url": "git+ssh://git@github.com/sondr3/astro-compressor.git"
 	},
-	"author": "Sondre Nilsen <sondre@eons.io> (https://www.eons.io)",
+	"author": "Sondre Aasemoen <sondre@eons.io> (https://www.eons.io)",
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/sondr3/astro-compressor/issues"
