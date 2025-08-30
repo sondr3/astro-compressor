@@ -2,7 +2,7 @@ import { fileURLToPath } from "node:url";
 
 import type { AstroIntegration } from "astro";
 import type { BrotliOptions, ZlibOptions, ZstdOptions } from "./compress.js";
-import { brotli, gzip, zstd } from "./compress.js";
+import { brotli, gzip, walkDir, zstd } from "./compress.js";
 
 const defaultFileExtensions = [".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"];
 
@@ -35,10 +35,15 @@ export default function (opts: Options = defaultOptions): AstroIntegration {
 		hooks: {
 			"astro:build:done": async ({ dir, logger }) => {
 				const path = fileURLToPath(dir);
+				const files = [];
+				for await (const file of walkDir(path, options.fileExtensions)) {
+					files.push(file);
+				}
+
 				await Promise.allSettled([
-					gzip(path, logger, options.fileExtensions, options.gzip, options.batchSize),
-					brotli(path, logger, options.fileExtensions, options.brotli, options.batchSize),
-					zstd(path, logger, options.fileExtensions, options.zstd, options.batchSize),
+					gzip(files, logger, options.gzip, options.batchSize),
+					brotli(files, logger, options.brotli, options.batchSize),
+					zstd(files, logger, options.zstd, options.batchSize),
 				]);
 				logger.info("Compression finished\n");
 			},
