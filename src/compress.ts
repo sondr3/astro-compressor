@@ -3,15 +3,18 @@ import { readdir } from "node:fs/promises";
 import { extname, resolve } from "node:path";
 import { hrtime } from "node:process";
 import { promises as stream } from "node:stream";
+import type { BrotliOptions, ZlibOptions, ZstdOptions } from "node:zlib";
 import * as zlib from "node:zlib";
 
 import type { AstroIntegrationLogger } from "astro";
 
-interface CompressionOptions {
+export type { BrotliOptions, ZlibOptions, ZstdOptions };
+
+interface CompressionOptions<O extends object> {
 	dir: string;
 	extensions: Array<string>;
 	batchSize: number;
-	enabled: boolean | undefined;
+	enabled: boolean | O | undefined;
 }
 
 async function* walkDir(dir: string, extensions: Array<string>): AsyncGenerator<string> {
@@ -30,14 +33,14 @@ const filterFile = (file: string, extensions: Array<string>): boolean => {
 	return extensions.some((ext) => extname(file) === ext);
 };
 
-const compress = async <T extends NodeJS.WritableStream>(
+const compress = async <T extends NodeJS.WritableStream, O extends object>(
 	name: string,
 	compressedFileNames: string,
 	compressor: () => T,
 	logger: AstroIntegrationLogger,
-	{ dir, extensions, batchSize, enabled }: CompressionOptions,
+	{ dir, extensions, batchSize, enabled }: CompressionOptions<O>,
 ): Promise<void> => {
-	if (!enabled) {
+	if (!enabled && typeof enabled !== "object") {
 		logger.warn(`${name} compression disabled, skipping...`);
 		return;
 	}
@@ -68,32 +71,47 @@ export const gzip = async (
 	dir: string,
 	logger: AstroIntegrationLogger,
 	extensions: Array<string>,
-	enabled?: boolean,
+	enabled?: boolean | ZlibOptions,
 	batchSize = 10,
 ): Promise<void> => {
-	await compress("gzip", "gz", zlib.createGzip.bind({ level: 9 }), logger, { dir, extensions, enabled, batchSize });
+	await compress("gzip", "gz", zlib.createGzip.bind({ level: 9 }), logger, {
+		dir,
+		extensions,
+		enabled,
+		batchSize,
+	});
 };
 
 export const brotli = async (
 	dir: string,
 	logger: AstroIntegrationLogger,
 	extensions: Array<string>,
-	enabled?: boolean,
+	enabled?: boolean | BrotliOptions,
 	batchSize = 10,
 ): Promise<void> => {
-	await compress("brotli", "br", zlib.createBrotliCompress, logger, { dir, extensions, enabled, batchSize });
+	await compress("brotli", "br", zlib.createBrotliCompress, logger, {
+		dir,
+		extensions,
+		enabled,
+		batchSize,
+	});
 };
 
 export const zstd = async (
 	dir: string,
 	logger: AstroIntegrationLogger,
 	extensions: Array<string>,
-	enabled?: boolean,
+	enabled?: boolean | ZstdOptions,
 	batchSize = 10,
 ): Promise<void> => {
 	if (typeof zlib.createZstdCompress !== "function") {
 		logger.warn("zstd compression is not supported in this Node.js version.");
 		return;
 	}
-	await compress("zstd", "zst", zlib.createZstdCompress, logger, { dir, extensions, enabled, batchSize });
+	await compress("zstd", "zst", zlib.createZstdCompress, logger, {
+		dir,
+		extensions,
+		enabled,
+		batchSize,
+	});
 };

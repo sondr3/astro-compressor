@@ -1,18 +1,18 @@
 import { fileURLToPath } from "node:url";
 
 import type { AstroIntegration } from "astro";
-
+import type { BrotliOptions, ZlibOptions, ZstdOptions } from "./compress.js";
 import { brotli, gzip, zstd } from "./compress.js";
 
 const defaultFileExtensions = [".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"];
 
 interface Options {
 	/** Enable gzip compression */
-	gzip?: boolean;
+	gzip?: boolean | ZlibOptions;
 	/** Enable brotli compression */
-	brotli?: boolean;
+	brotli?: boolean | BrotliOptions;
 	/** Enable zstd compression */
-	zstd?: boolean;
+	zstd?: boolean | ZstdOptions;
 	/** Extensions to compress, must be in the format `.html`, `.css` etc */
 	fileExtensions?: Array<string>;
 	/** Number of files to batch process */
