@@ -84,7 +84,7 @@ export const brotli = async (
 ): Promise<void> => {
 	await compress("brotli", "br", zlib.createBrotliCompress, logger, {
 		files,
-		enabled: enabled === true,
+		enabled: enabled === true || typeof enabled === "object",
 		options: typeof enabled === "object" ? enabled : undefined,
 		batchSize,
 	});
@@ -103,7 +103,7 @@ export const zstd = async (
 
 	await compress("zstd", "zst", zlib.createZstdCompress, logger, {
 		files,
-		enabled: enabled === true,
+		enabled: enabled === true || typeof enabled === "object",
 		options: typeof enabled === "object" ? enabled : undefined,
 		batchSize,
 	});
