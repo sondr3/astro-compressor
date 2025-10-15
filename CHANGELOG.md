@@ -1,3 +1,27 @@
+## 1.2.0
+> 2025-10-15
+
+## Summary
+
+This release adds support for configuring the compression algorithms directly
+instead of just a boolean flag for more advanced usage. It also includes a
+optimized file searching by only traversing the output directory once.
+
+### Commits
+- [[`eb123a8`](https://github.com/sondr3/astro-compressor/commit/eb123a8)] Bump actions/setup-node from 5 to 6
+- [[`aeaa6b0`](https://github.com/sondr3/astro-compressor/commit/aeaa6b0)] Bump pnpm/action-setup from 4.1.0 to 4.2.0
+- [[`40c660e`](https://github.com/sondr3/astro-compressor/commit/40c660e)] Bump actions/setup-node from 4 to 5
+- [[`0e77401`](https://github.com/sondr3/astro-compressor/commit/0e77401)] Test with bools and objects
+- [[`36050b2`](https://github.com/sondr3/astro-compressor/commit/36050b2)] Next prerelease
+- [[`405945b`](https://github.com/sondr3/astro-compressor/commit/405945b)] Fix 'enabled' for brotli and zstd
+- [[`4696d84`](https://github.com/sondr3/astro-compressor/commit/4696d84)] Update README
+- [[`ea30882`](https://github.com/sondr3/astro-compressor/commit/ea30882)] Use my new, actual last name
+- [[`d578795`](https://github.com/sondr3/astro-compressor/commit/d578795)] Mark as prerelease
+- [[`e95738e`](https://github.com/sondr3/astro-compressor/commit/e95738e)] Only find files once instead of per compressor
+- [[`8941c4e`](https://github.com/sondr3/astro-compressor/commit/8941c4e)] Add @tsconfig/node22
+- [[`9731ae9`](https://github.com/sondr3/astro-compressor/commit/9731ae9)] Add compression options to compressions
+- [[`33c0f46`](https://github.com/sondr3/astro-compressor/commit/33c0f46)] Bump actions/checkout from 4 to 5
+
 ## v1.1.2
 > 2025-08-06
 
