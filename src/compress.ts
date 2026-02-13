@@ -85,7 +85,14 @@ export const brotli = async (
 	await compress("brotli", "br", zlib.createBrotliCompress, logger, {
 		files,
 		enabled: enabled === true || typeof enabled === "object",
-		options: typeof enabled === "object" ? enabled : undefined,
+		options:
+			typeof enabled === "object"
+				? enabled
+				: {
+						params: {
+							[zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY,
+						},
+					},
 		batchSize,
 	});
 };
@@ -104,7 +111,16 @@ export const zstd = async (
 	await compress("zstd", "zst", zlib.createZstdCompress, logger, {
 		files,
 		enabled: enabled === true || typeof enabled === "object",
-		options: typeof enabled === "object" ? enabled : undefined,
+		options:
+			typeof enabled === "object"
+				? enabled
+				: {
+						params: {
+							// 19 is the highest standard zstd level. Levels 20-22 exist, but they're "ultra" levels that require
+							// significantly more memory.
+							[zlib.constants.ZSTD_c_compressionLevel]: 19,
+						},
+					},
 		batchSize,
 	});
 };
