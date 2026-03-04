@@ -8,6 +8,8 @@ test("astro build outputs expected log", () => {
 		encoding: "utf8",
 		stdio: "pipe",
 		cwd: path.join(process.cwd(), "test"),
+		// oxlint-disable-next-line node/no-process-env
+		env: { ...process.env, NO_COLOR: "1" },
 	});
 
 	expect(build.stdout).toContain("[astro-compressor] gzip     compressed 2 files");
