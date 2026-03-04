@@ -2,4 +2,4 @@ pre-commit:
   commands:
     check:
       glob: "*.{mjs,ts,json,jsonc,yml}"
-      run: pnpm check
+      run: pnpm fix
