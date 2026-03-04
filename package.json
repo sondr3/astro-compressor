@@ -29,7 +29,7 @@
 	"types": "./dist/index.d.ts",
 	"scripts": {
 		"dev": "tsc --watch --incremental",
-		"build": "rm -rf dist && tsc",
+		"build": "rm -rf dist && tsc -p tsconfig.build.json",
 		"test": "vitest",
 		"prepare": "lefthook install",
 		"check": "oxlint && oxfmt --check",

@@ -1,15 +1,4 @@
 {
-	"extends": [
-		"@tsconfig/recommended/tsconfig.json",
-		"@tsconfig/strictest/tsconfig.json",
-		"@tsconfig/node22/tsconfig.json"
-	],
-	"compilerOptions": {
-		"noUncheckedSideEffectImports": true,
-		"declaration": true,
-		"declarationMap": true,
-		"outDir": "dist"
-	},
-	"include": ["src"],
-	"exclude": ["coverage", "node_modules", "dist", "test"]
+	"extends": ["./tsconfig.base.json"],
+	"include": ["src"]
 }
