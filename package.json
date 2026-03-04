@@ -36,9 +36,7 @@
 		"fix": "oxlint --fix && oxfmt"
 	},
 	"devDependencies": {
-		"@tsconfig/node22": "22.0.5",
-		"@tsconfig/recommended": "1.0.13",
-		"@tsconfig/strictest": "2.0.8",
+		"@sondr3/tsconfig": "0.10.0",
 		"@types/node": "25.3.3",
 		"astro": "5.18.0",
 		"lefthook": "2.1.2",

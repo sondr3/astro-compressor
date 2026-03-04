@@ -1,9 +1,5 @@
 {
-	"extends": [
-		"@tsconfig/recommended/tsconfig.json",
-		"@tsconfig/strictest/tsconfig.json",
-		"@tsconfig/node22/tsconfig.json"
-	],
+	"extends": ["@sondr3/tsconfig/tsconfig.base.json", "@sondr3/tsconfig/tsconfig.node.json"],
 	"compilerOptions": {
 		"noUncheckedSideEffectImports": true
 	},
