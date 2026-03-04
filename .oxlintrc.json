@@ -1,0 +1,52 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["eslint", "import", "typescript", "oxc", "node", "promise", "unicorn"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "error",
+		"restriction": "error",
+		"perf": "warn"
+	},
+	"rules": {
+		"typescript/array-type": ["error", { "default": "generic" }],
+		"unicorn/filename-case": ["error", { "case": "kebabCase" }],
+		"oxc/no-async-await": "off",
+		"oxc/no-rest-spread-properties": "off",
+		"eslint/no-use-before-define": "off"
+	},
+	"options": {
+		"typeAware": true
+	},
+	"settings": {
+		"jsdoc": {
+			"ignorePrivate": false,
+			"ignoreInternal": false,
+			"ignoreReplacesDocs": true,
+			"overrideReplacesDocs": true,
+			"augmentsExtendsReplacesDocs": false,
+			"implementsReplacesDocs": false,
+			"exemptDestructuredRootsFromChecks": false,
+			"tagNamePreference": {}
+		},
+		"vitest": {
+			"typecheck": false
+		}
+	},
+	"overrides": [
+		{
+			"files": ["test/**"],
+			"rules": {
+				"unicorn/filename-case": "off",
+				"import/unambiguous": "off",
+				"import/no-default-export": "off",
+				"import/no-relative-parent-imports": "off",
+				"typescript/triple-slash-reference": "off"
+			}
+		}
+	],
+	"env": {
+		"builtin": true
+	},
+	"globals": {},
+	"ignorePatterns": []
+}

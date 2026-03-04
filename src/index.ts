@@ -1,6 +1,7 @@
 import { fileURLToPath } from "node:url";
 
 import type { AstroIntegration } from "astro";
+
 import type { BrotliOptions, ZlibOptions, ZstdOptions } from "./compress.js";
 import { brotli, gzip, walkDir, zstd } from "./compress.js";
 
@@ -27,6 +28,7 @@ const defaultOptions: Required<Options> = {
 	batchSize: 10,
 };
 
+// oxlint-disable-next-line unicorn/no-anonymous-default-export, import/no-default-export
 export default function (opts: Options = defaultOptions): AstroIntegration {
 	const options = { ...defaultOptions, ...opts };
 

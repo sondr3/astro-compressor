@@ -35,7 +35,7 @@ const filterFile = (file: string, extensions: Array<string>): boolean => {
 	return extensions.some((ext) => extname(file) === ext);
 };
 
-const mergeOptions = <T extends CompressionOptionsInner>(defaults: T, overrides: T | boolean | undefined) => ({
+const mergeOptions = <T extends CompressionOptionsInner>(defaults: T, overrides: T | boolean | undefined): T => ({
 	...defaults,
 	...(typeof overrides === "object" ? overrides : {}),
 });
@@ -55,6 +55,7 @@ const compress = async <O extends CompressionOptionsInner, T extends NodeJS.Read
 	const start = hrtime.bigint();
 	for (let i = 0; i < files.length; i += batchSize) {
 		const batch = files.slice(i, i + batchSize);
+		// oxlint-disable-next-line no-await-in-loop, intentional batching
 		await Promise.all(
 			batch.map(async (path) => {
 				const source = createReadStream(path);

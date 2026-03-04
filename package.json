@@ -2,47 +2,49 @@
 	"name": "astro-compressor",
 	"version": "1.2.0",
 	"description": "A gzip, brotli and zstd compressor for Astro",
-	"type": "module",
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
+	"keywords": [
+		"astro",
+		"astro-component",
+		"astro-integration",
+		"compression",
+		"performance"
+	],
+	"homepage": "https://github.com/sondr3/astro-compressor#readme",
+	"bugs": {
+		"url": "https://github.com/sondr3/astro-compressor/issues"
+	},
+	"license": "MIT",
+	"author": "Sondre Aasemoen <sondre@eons.io> (https://www.eons.io)",
 	"repository": {
 		"type": "git",
 		"url": "git+ssh://git@github.com/sondr3/astro-compressor.git"
 	},
-	"author": "Sondre Aasemoen <sondre@eons.io> (https://www.eons.io)",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/sondr3/astro-compressor/issues"
-	},
-	"homepage": "https://github.com/sondr3/astro-compressor#readme",
-	"keywords": [
-		"astro",
-		"astro-integration",
-		"astro-component",
-		"performance",
-		"compression"
-	],
 	"files": [
 		"dist/**",
 		"CHANGELOG.md",
 		"README.md"
 	],
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
 	"scripts": {
 		"dev": "tsc --watch --incremental",
 		"build": "rm -rf dist && tsc",
 		"test": "vitest",
 		"prepare": "lefthook install",
-		"check": "biome check",
-		"fix": "biome check --write"
+		"check": "oxlint && oxfmt --check",
+		"fix": "oxlint --fix && oxfmt"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.4.5",
 		"@tsconfig/node22": "22.0.5",
 		"@tsconfig/recommended": "1.0.13",
 		"@tsconfig/strictest": "2.0.8",
 		"@types/node": "25.3.3",
 		"astro": "5.18.0",
 		"lefthook": "2.1.2",
+		"oxfmt": "0.36.0",
+		"oxlint": "1.51.0",
+		"oxlint-tsgolint": "0.16.0",
 		"typescript": "5.9.3",
 		"vitest": "4.0.18"
 	},

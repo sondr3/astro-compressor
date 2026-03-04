@@ -1,4 +1,5 @@
 ## 1.2.0
+
 > 2025-10-15
 
 ## Summary
@@ -8,6 +9,7 @@ instead of just a boolean flag for more advanced usage. It also includes a
 optimized file searching by only traversing the output directory once.
 
 ### Commits
+
 - [[`eb123a8`](https://github.com/sondr3/astro-compressor/commit/eb123a8)] Bump actions/setup-node from 5 to 6
 - [[`aeaa6b0`](https://github.com/sondr3/astro-compressor/commit/aeaa6b0)] Bump pnpm/action-setup from 4.1.0 to 4.2.0
 - [[`40c660e`](https://github.com/sondr3/astro-compressor/commit/40c660e)] Bump actions/setup-node from 4 to 5
@@ -23,6 +25,7 @@ optimized file searching by only traversing the output directory once.
 - [[`33c0f46`](https://github.com/sondr3/astro-compressor/commit/33c0f46)] Bump actions/checkout from 4 to 5
 
 ## v1.1.2
+
 > 2025-08-06
 
 ## Summary
@@ -30,9 +33,11 @@ optimized file searching by only traversing the output directory once.
 Documentation update to mention `zstd` compression alongside other compression algorithms.
 
 ### Commits
+
 - [[`c9d3fd7`](https://github.com/sondr3/astro-compressor/commit/c9d3fd7)] Mention zstd alongside other compression algorithms
 
 ## v1.1.1
+
 > 2025-07-30
 
 ## Summary
@@ -40,10 +45,12 @@ Documentation update to mention `zstd` compression alongside other compression a
 Bug fix for gracefully handling Node versions without zstd compression.
 
 ### Commits
+
 - [[`9855701`](https://github.com/sondr3/astro-compressor/commit/9855701)] Gracefully fall back when zstd is not supported
 - [[`9fdc219`](https://github.com/sondr3/astro-compressor/commit/9fdc219)] Set the engines to proper versions
 
 ## v1.1.0
+
 > 2025-07-28
 
 ## Summary
@@ -51,6 +58,7 @@ Bug fix for gracefully handling Node versions without zstd compression.
 Thanks to @Alex-1701, `astro-compressor` now also supports [`zstd`](https://caniuse.com/?search=zstd) compression.
 
 ### Commits
+
 - [[`c3082cc`](https://github.com/sondr3/astro-compressor/commit/c3082cc)] Update README, set 'engines' field in package.json
 - [[`f851c2b`](https://github.com/sondr3/astro-compressor/commit/f851c2b)] Add lefthook to approved builds
 - [[`b644541`](https://github.com/sondr3/astro-compressor/commit/b644541)] Infer pnpm version from package.json
