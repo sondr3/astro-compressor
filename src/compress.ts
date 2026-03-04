@@ -12,11 +12,11 @@ export type { BrotliOptions, ZlibOptions, ZstdOptions };
 
 type CompressionOptionsInner = ZlibOptions | BrotliOptions | ZstdOptions;
 
-interface CompressionOptions {
+interface CompressionOptions<O = CompressionOptionsInner> {
 	files: Array<string>;
 	batchSize: number;
 	enabled: boolean | undefined;
-	options?: CompressionOptionsInner | undefined;
+	options?: O | undefined;
 }
 
 export async function* walkDir(dir: string, extensions: Array<string>): AsyncGenerator<string> {
@@ -40,12 +40,12 @@ const mergeOptions = <T extends CompressionOptionsInner>(defaults: T, overrides:
 	...(typeof overrides === "object" ? overrides : {}),
 });
 
-const compress = async <T extends NodeJS.WritableStream>(
+const compress = async <O extends CompressionOptionsInner, T extends NodeJS.ReadWriteStream>(
 	name: string,
 	compressedFileNames: string,
-	compressor: (options: CompressionOptionsInner | undefined) => T,
+	compressor: (options: O | undefined) => T,
 	logger: AstroIntegrationLogger,
-	{ files, batchSize, enabled, options }: CompressionOptions,
+	{ files, batchSize, enabled, options }: CompressionOptions<O>,
 ): Promise<void> => {
 	if (!enabled) {
 		logger.warn(`${name} compression disabled, skipping...`);
