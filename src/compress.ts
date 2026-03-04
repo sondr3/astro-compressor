@@ -10,11 +10,13 @@ import type { AstroIntegrationLogger } from "astro";
 
 export type { BrotliOptions, ZlibOptions, ZstdOptions };
 
+type CompressionOptionsInner = ZlibOptions | BrotliOptions | ZstdOptions;
+
 interface CompressionOptions {
 	files: Array<string>;
 	batchSize: number;
 	enabled: boolean | undefined;
-	options?: ZlibOptions | BrotliOptions | ZstdOptions | undefined;
+	options?: CompressionOptionsInner | undefined;
 }
 
 export async function* walkDir(dir: string, extensions: Array<string>): AsyncGenerator<string> {
@@ -33,10 +35,15 @@ const filterFile = (file: string, extensions: Array<string>): boolean => {
 	return extensions.some((ext) => extname(file) === ext);
 };
 
+const mergeOptions = <T extends CompressionOptionsInner>(defaults: T, overrides: T | boolean | undefined) => ({
+	...defaults,
+	...(typeof overrides === "object" ? overrides : {}),
+});
+
 const compress = async <T extends NodeJS.WritableStream>(
 	name: string,
 	compressedFileNames: string,
-	compressor: (options: ZlibOptions | BrotliOptions | ZstdOptions | undefined) => T,
+	compressor: (options: CompressionOptionsInner | undefined) => T,
 	logger: AstroIntegrationLogger,
 	{ files, batchSize, enabled, options }: CompressionOptions,
 ): Promise<void> => {
@@ -71,7 +78,7 @@ export const gzip = async (
 	await compress("gzip", "gz", zlib.createGzip, logger, {
 		files,
 		enabled: enabled === true || typeof enabled === "object",
-		options: typeof enabled === "object" ? enabled : { level: zlib.constants.Z_BEST_COMPRESSION },
+		options: mergeOptions({ level: zlib.constants.Z_BEST_COMPRESSION }, enabled),
 		batchSize,
 	});
 };
@@ -85,14 +92,14 @@ export const brotli = async (
 	await compress("brotli", "br", zlib.createBrotliCompress, logger, {
 		files,
 		enabled: enabled === true || typeof enabled === "object",
-		options:
-			typeof enabled === "object"
-				? enabled
-				: {
-						params: {
-							[zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY,
-						},
-					},
+		options: mergeOptions(
+			{
+				params: {
+					[zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY,
+				},
+			},
+			enabled,
+		),
 		batchSize,
 	});
 };
@@ -111,16 +118,17 @@ export const zstd = async (
 	await compress("zstd", "zst", zlib.createZstdCompress, logger, {
 		files,
 		enabled: enabled === true || typeof enabled === "object",
-		options:
-			typeof enabled === "object"
-				? enabled
-				: {
-						params: {
-							// 19 is the highest standard zstd level. Levels 20-22 exist, but they're "ultra" levels that require
-							// significantly more memory.
-							[zlib.constants.ZSTD_c_compressionLevel]: 19,
-						},
-					},
+		options: mergeOptions(
+			{
+				params: {
+					// 19 is the highest standard zstd level. Levels 20-22 exist, but they're "ultra"
+					// levels that require significantly more memory for both compression
+					// and decompression.
+					[zlib.constants.ZSTD_c_compressionLevel]: 19,
+				},
+			},
+			enabled,
+		),
 		batchSize,
 	});
 };
