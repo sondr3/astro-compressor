@@ -1,3 +1,26 @@
+## v1.3.0
+
+> 2026-03-04
+
+## Summary
+
+This release adds better default compression for zstd and brotli, and better
+handling of compression options. Thanks to @Daniel15 for this contribution.
+
+### Commits
+
+- [[`9d97f8a`](https://github.com/sondr3/astro-compressor/commit/9d97f8a)] Use a separate release pipeline
+- [[`09f173b`](https://github.com/sondr3/astro-compressor/commit/09f173b)] Run 'pnpm fix' in pre-commit hook
+- [[`34e8ca2`](https://github.com/sondr3/astro-compressor/commit/34e8ca2)] Drop @tsconfig packages
+- [[`d48d4a9`](https://github.com/sondr3/astro-compressor/commit/d48d4a9)] Force NO_COLOR in tests to avoid ANSI shenanigans
+- [[`f0816b8`](https://github.com/sondr3/astro-compressor/commit/f0816b8)] Refactor the build setup slightly
+- [[`ff616ca`](https://github.com/sondr3/astro-compressor/commit/ff616ca)] Move to oxlint and oxfmt
+- [[`98cc08f`](https://github.com/sondr3/astro-compressor/commit/98cc08f)] Bump all packages, fix type errors
+- [[`de315e0`](https://github.com/sondr3/astro-compressor/commit/de315e0)] Improve handling of default options @Daniel15
+- [[`9878779`](https://github.com/sondr3/astro-compressor/commit/9878779)] Set default compression levels for Brotli and zstd @Daniel15
+- [[`f3cf8dc`](https://github.com/sondr3/astro-compressor/commit/f3cf8dc)] Bump actions/checkout from 5 to 6
+- [[`3330a3c`](https://github.com/sondr3/astro-compressor/commit/3330a3c)] We now use trusted publishing, remove tokens
+
 ## 1.2.0
 
 > 2025-10-15
