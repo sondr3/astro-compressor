@@ -2,25 +2,27 @@ name: pipeline
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   pipeline:
     name: pipeline
+    environment: release
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: ["latest", "lts/*"]
 
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v4.2.0
       - uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node }}
+          node-version: latest
           cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install and build
         run: pnpm install --frozen-lockfile
@@ -35,3 +37,6 @@ jobs:
         run: |
           cd test && pnpm install --frozen-lockfile
           cd .. && pnpm test
+
+      - name: Publish
+        run: pnpm publish --no-git-checks --provenance --access public
