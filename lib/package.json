@@ -21,7 +21,8 @@
 		"url": "git+ssh://git@github.com/sondr3/astro-compressor.git"
 	},
 	"files": [
-		"dist/**",
+		"dist/",
+		"src/",
 		"CHANGELOG.md",
 		"README.md"
 	],
