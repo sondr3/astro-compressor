@@ -10,9 +10,9 @@
 		"astro": "astro"
 	},
 	"dependencies": {
-		"astro": "6.1.5"
+		"astro": "catalog:"
 	},
 	"devDependencies": {
-		"astro-compressor": "link:.."
+		"astro-compressor": "workspace:^"
 	}
 }

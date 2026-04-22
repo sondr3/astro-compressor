@@ -32,6 +32,4 @@ jobs:
         run: pnpm build
 
       - name: Test
-        run: |
-          cd test && pnpm install --frozen-lockfile
-          cd .. && pnpm test
+        run: pnpm test

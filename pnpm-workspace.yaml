@@ -1,3 +1,8 @@
+packages:
+  - lib
+  - test
+catalog:
+  astro: 6.1.9
 ignoredBuiltDependencies:
   - sharp
 onlyBuiltDependencies:

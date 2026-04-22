@@ -34,9 +34,7 @@ jobs:
         run: pnpm build
 
       - name: Test
-        run: |
-          cd test && pnpm install --frozen-lockfile
-          cd .. && pnpm test
+        run: pnpm test
 
       - name: Publish
-        run: pnpm publish --no-git-checks --provenance --access public
+        run: pnpm publish --filter astro-compressor --no-git-checks --provenance --access public
