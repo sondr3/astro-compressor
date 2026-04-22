@@ -40,10 +40,10 @@ const mergeOptions = <T extends CompressionOptionsInner>(defaults: T, overrides:
 	...(typeof overrides === "object" ? overrides : {}),
 });
 
-const compress = async <O extends CompressionOptionsInner, T extends NodeJS.ReadWriteStream>(
+const compress = async <O extends CompressionOptionsInner>(
 	name: string,
 	compressedFileNames: string,
-	compressor: (options: O | undefined) => T,
+	compressor: (options: O | undefined) => NodeJS.ReadWriteStream,
 	logger: AstroIntegrationLogger,
 	{ files, batchSize, enabled, options }: CompressionOptions<O>,
 ): Promise<void> => {

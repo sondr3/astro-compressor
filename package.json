@@ -1,50 +1,21 @@
 {
-	"name": "astro-compressor",
+	"name": "@sondr3/astro-compressor",
 	"version": "1.3.0",
+	"private": true,
 	"description": "A gzip, brotli and zstd compressor for Astro",
-	"keywords": [
-		"astro",
-		"astro-component",
-		"astro-integration",
-		"compression",
-		"performance"
-	],
-	"homepage": "https://github.com/sondr3/astro-compressor#readme",
-	"bugs": {
-		"url": "https://github.com/sondr3/astro-compressor/issues"
-	},
-	"license": "MIT",
-	"author": "Sondre Aasemoen <sondre@eons.io> (https://www.eons.io)",
-	"repository": {
-		"type": "git",
-		"url": "git+ssh://git@github.com/sondr3/astro-compressor.git"
-	},
-	"files": [
-		"dist/**",
-		"CHANGELOG.md",
-		"README.md"
-	],
-	"type": "module",
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
 	"scripts": {
-		"dev": "tsc --watch --incremental",
-		"build": "rm -rf dist && tsc -p tsconfig.build.json",
-		"test": "vitest",
+		"dev": "pnpm run -r dev",
+		"build": "pnpm run --filter 'astro-compressor' -r build",
+		"test": "pnpm run -r test",
 		"prepare": "lefthook install",
 		"check": "oxlint && oxfmt --check",
 		"fix": "oxlint --fix && oxfmt"
 	},
 	"devDependencies": {
-		"@sondr3/tsconfig": "0.10.0",
-		"@types/node": "25.5.2",
-		"astro": "6.1.5",
-		"lefthook": "2.1.5",
-		"oxfmt": "0.44.0",
-		"oxlint": "1.59.0",
-		"oxlint-tsgolint": "0.20.0",
-		"typescript": "6.0.2",
-		"vitest": "4.1.3"
+		"lefthook": "2.1.6",
+		"oxfmt": "0.46.0",
+		"oxlint": "1.61.0",
+		"oxlint-tsgolint": "0.21.1"
 	},
 	"engines": {
 		"node": ">=22"

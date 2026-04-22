@@ -7,7 +7,7 @@ test("astro build outputs expected log", () => {
 	const build = spawnSync("pnpm", ["build"], {
 		encoding: "utf8",
 		stdio: "pipe",
-		cwd: path.join(process.cwd(), "test"),
+		cwd: path.join(process.cwd(), "..", "test"),
 		// oxlint-disable-next-line node/no-process-env
 		env: { ...process.env, NO_COLOR: "1" },
 	});
