@@ -63,28 +63,29 @@ abstract class Compressor<O extends CompressionOptionsInner> {
 				format: this.name,
 			})
 			if (shouldCompress === "skip") return
-			this.compressed += 1
 		}
 
+		this.compressed += 1
 		const dest = `${file}.${this.ext}`
 		const source = await fs.readFile(file)
 		const compressed = await compressor(source, this.options)
-		await fs.writeFile(dest, compressed)
 
-		if (typeof this.hooks?.["compressor:file:after"] === "function") {
-			const shouldRemove = await this.hooks?.["compressor:file:after"]({
-				inputPath: file,
-				inputSize: source.byteLength,
-				outputPath: dest,
-				outputSize: compressed.byteLength,
-				format: this.name,
-				logger: this.logger,
-			})
+		const shouldRemove =
+			typeof this.hooks?.["compressor:file:after"] === "function"
+				? await this.hooks?.["compressor:file:after"]({
+						inputPath: file,
+						inputSize: source.byteLength,
+						outputPath: dest,
+						outputSize: compressed.byteLength,
+						format: this.name,
+						logger: this.logger,
+					})
+				: "keep"
 
-			if (shouldRemove === "remove") {
-				await fs.rm(dest, { recursive: false, force: false })
-				this.compressed -= 1
-			}
+		if (shouldRemove === "keep") {
+			await fs.writeFile(dest, compressed)
+		} else {
+			this.compressed -= 1
 		}
 	}
 }
