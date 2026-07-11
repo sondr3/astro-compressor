@@ -1,6 +1,4 @@
 import { createReadStream, createWriteStream } from "node:fs";
-import { readdir } from "node:fs/promises";
-import path from "node:path";
 import { hrtime } from "node:process";
 import { promises as stream } from "node:stream";
 import type { BrotliOptions, ZlibOptions, ZstdOptions } from "node:zlib";
@@ -18,22 +16,6 @@ interface CompressionOptions<O = CompressionOptionsInner> {
 	enabled: boolean | undefined;
 	options?: O | undefined;
 }
-
-export async function* walkDir(dir: string, extensions: Array<string>): AsyncGenerator<string> {
-	const entries = await readdir(dir, { withFileTypes: true });
-	for (const entry of entries) {
-		const name = path.resolve(dir, entry.name);
-		if (entry.isDirectory()) {
-			yield* walkDir(name, extensions);
-		} else if (filterFile(entry.name, extensions)) {
-			yield name;
-		}
-	}
-}
-
-const filterFile = (file: string, extensions: Array<string>): boolean => {
-	return extensions.some((ext) => path.extname(file) === ext);
-};
 
 const mergeOptions = <T extends CompressionOptionsInner>(defaults: T, overrides: T | boolean | undefined): T => ({
 	...defaults,
