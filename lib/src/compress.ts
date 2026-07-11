@@ -1,4 +1,5 @@
 import { createReadStream, createWriteStream } from "node:fs"
+import { promises as fs } from "node:fs"
 import { hrtime } from "node:process"
 import { promises as stream } from "node:stream"
 import type { BrotliOptions, ZlibOptions, ZstdOptions } from "node:zlib"
@@ -37,17 +38,20 @@ const compress = async <O extends CompressionOptionsInner>(
 		return
 	}
 
+	let compressed = 0
 	const start = hrtime.bigint()
 	for (let i = 0; i < files.length; i += batchSize) {
 		const batch = files.slice(i, i + batchSize)
 		// oxlint-disable-next-line no-await-in-loop, intentional batching
 		await Promise.all(
 			batch.map(async (file) => {
-				if (
-					typeof hooks?.["compressor:file:before"] === "function" &&
-					!hooks?.["compressor:file:before"]({ filePath: file, logger, format: name })
-				) {
-					return
+				if (typeof hooks?.["compressor:file:before"] === "function") {
+					const shouldCompress = await hooks?.["compressor:file:before"]({ filePath: file, logger, format: name })
+					if (shouldCompress === "keep") {
+						compressed += 1
+					} else {
+						return
+					}
 				}
 
 				const outputFile = `${file}.${compressedFileNames}`
@@ -57,21 +61,26 @@ const compress = async <O extends CompressionOptionsInner>(
 				await stream.pipeline(source, comp, destination)
 
 				if (typeof hooks?.["compressor:file:after"] === "function") {
-					await hooks?.["compressor:file:after"]({
+					const shouldRemove = await hooks?.["compressor:file:after"]({
 						inputPath: file,
 						inputSize: source.bytesRead,
 						outputPath: outputFile,
-						outputSize: 0,
+						outputSize: destination.bytesWritten,
 						format: name,
 						logger,
 					})
+
+					if (shouldRemove === "remove") {
+						await fs.rm(outputFile, { recursive: false, force: false })
+						compressed -= 1
+					}
 				}
 			}),
 		)
 	}
 
 	const end = hrtime.bigint()
-	logger.info(`${name.padEnd(8, " ")} compressed ${files.length} files in ${(end - start) / BigInt(1000000)}ms`)
+	logger.info(`${name.padEnd(8, " ")} compressed ${compressed} files in ${(end - start) / BigInt(1000000)}ms`)
 }
 
 export const gzip = async (files: Array<string>, logger: AstroIntegrationLogger, options: Options): Promise<void> => {
