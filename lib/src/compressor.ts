@@ -21,6 +21,8 @@ abstract class Compressor<O extends CompressionOptionsInner> {
 	protected hooks: Options["hooks"]
 	protected logger: AstroIntegrationLogger
 
+	compressed = 0
+
 	protected abstract isEnabled(options: Options): boolean
 
 	constructor(logger: AstroIntegrationLogger, options: Options) {
@@ -37,6 +39,7 @@ abstract class Compressor<O extends CompressionOptionsInner> {
 				format: this.name,
 			})
 			if (shouldCompress === "skip") return
+			this.compressed += 1
 		}
 
 		const dest = `${file}.${this.ext}`
@@ -56,6 +59,7 @@ abstract class Compressor<O extends CompressionOptionsInner> {
 
 			if (shouldRemove === "remove") {
 				await fs.rm(dest, { recursive: false, force: false })
+				this.compressed -= 1
 			}
 		}
 	}

@@ -68,6 +68,10 @@ export class CompressionWorker {
 		}
 
 		await Promise.all(Array.from({ length: Math.min(this.concurrency, this.files.length) }, worker))
+
+		this.logger.info(`${this.brotli.name.padEnd(8, " ")} compressed ${this.brotli.compressed} files`)
+		this.logger.info(`${this.gzip.name.padEnd(8, " ")} compressed ${this.gzip.compressed} files`)
+		this.logger.info(`${this.zstd.name.padEnd(8, " ")} compressed ${this.zstd.compressed} files`)
 	}
 
 	public get enabledCompressors(): Record<Format, boolean> {
