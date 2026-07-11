@@ -1,26 +1,26 @@
-import { createReadStream, createWriteStream } from "node:fs";
-import { hrtime } from "node:process";
-import { promises as stream } from "node:stream";
-import type { BrotliOptions, ZlibOptions, ZstdOptions } from "node:zlib";
-import * as zlib from "node:zlib";
+import { createReadStream, createWriteStream } from "node:fs"
+import { hrtime } from "node:process"
+import { promises as stream } from "node:stream"
+import type { BrotliOptions, ZlibOptions, ZstdOptions } from "node:zlib"
+import * as zlib from "node:zlib"
 
-import type { AstroIntegrationLogger } from "astro";
+import type { AstroIntegrationLogger } from "astro"
 
-export type { BrotliOptions, ZlibOptions, ZstdOptions };
+export type { BrotliOptions, ZlibOptions, ZstdOptions }
 
-type CompressionOptionsInner = ZlibOptions | BrotliOptions | ZstdOptions;
+type CompressionOptionsInner = ZlibOptions | BrotliOptions | ZstdOptions
 
 interface CompressionOptions<O = CompressionOptionsInner> {
-	files: Array<string>;
-	batchSize: number;
-	enabled: boolean | undefined;
-	options?: O | undefined;
+	files: Array<string>
+	batchSize: number
+	enabled: boolean | undefined
+	options?: O | undefined
 }
 
 const mergeOptions = <T extends CompressionOptionsInner>(defaults: T, overrides: T | boolean | undefined): T => ({
 	...defaults,
 	...(typeof overrides === "object" ? overrides : {}),
-});
+})
 
 const compress = async <O extends CompressionOptionsInner>(
 	name: string,
@@ -30,27 +30,27 @@ const compress = async <O extends CompressionOptionsInner>(
 	{ files, batchSize, enabled, options }: CompressionOptions<O>,
 ): Promise<void> => {
 	if (!enabled) {
-		logger.warn(`${name} compression disabled, skipping...`);
-		return;
+		logger.warn(`${name} compression disabled, skipping...`)
+		return
 	}
 
-	const start = hrtime.bigint();
+	const start = hrtime.bigint()
 	for (let i = 0; i < files.length; i += batchSize) {
-		const batch = files.slice(i, i + batchSize);
+		const batch = files.slice(i, i + batchSize)
 		// oxlint-disable-next-line no-await-in-loop, intentional batching
 		await Promise.all(
 			batch.map(async (file) => {
-				const source = createReadStream(file);
-				const destination = createWriteStream(`${file}.${compressedFileNames}`);
-				const comp = compressor(options);
-				await stream.pipeline(source, comp, destination);
+				const source = createReadStream(file)
+				const destination = createWriteStream(`${file}.${compressedFileNames}`)
+				const comp = compressor(options)
+				await stream.pipeline(source, comp, destination)
 			}),
-		);
+		)
 	}
 
-	const end = hrtime.bigint();
-	logger.info(`${name.padEnd(8, " ")} compressed ${files.length} files in ${(end - start) / BigInt(1000000)}ms`);
-};
+	const end = hrtime.bigint()
+	logger.info(`${name.padEnd(8, " ")} compressed ${files.length} files in ${(end - start) / BigInt(1000000)}ms`)
+}
 
 export const gzip = async (
 	files: Array<string>,
@@ -63,8 +63,8 @@ export const gzip = async (
 		enabled: enabled === true || typeof enabled === "object",
 		options: mergeOptions({ level: zlib.constants.Z_BEST_COMPRESSION }, enabled),
 		batchSize,
-	});
-};
+	})
+}
 
 export const brotli = async (
 	files: Array<string>,
@@ -84,8 +84,8 @@ export const brotli = async (
 			enabled,
 		),
 		batchSize,
-	});
-};
+	})
+}
 
 export const zstd = async (
 	files: Array<string>,
@@ -94,8 +94,8 @@ export const zstd = async (
 	batchSize = 10,
 ): Promise<void> => {
 	if (typeof zlib.createZstdCompress !== "function") {
-		logger.warn("zstd compression is not supported in this Node.js version.");
-		return;
+		logger.warn("zstd compression is not supported in this Node.js version.")
+		return
 	}
 
 	await compress("zstd", "zst", zlib.createZstdCompress, logger, {
@@ -113,5 +113,5 @@ export const zstd = async (
 			enabled,
 		),
 		batchSize,
-	});
-};
+	})
+}
