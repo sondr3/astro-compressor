@@ -8,6 +8,5 @@
 		}
 	},
 	"files": [],
-	"exclude": ["coverage", "node_modules", "dist", "test"],
 	"references": [{ "path": "./tsconfig.dev.json" }, { "path": "./tsconfig.build.json" }]
 }

@@ -1,6 +1,6 @@
 packages:
   - lib
-  - test
+  - integration-tests/*
 allowBuilds:
   esbuild: true
   lefthook: true

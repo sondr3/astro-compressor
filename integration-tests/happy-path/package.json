@@ -1,5 +1,5 @@
 {
-	"name": "astro-compressor-test",
+	"name": "astro-compressor-happy-path",
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
