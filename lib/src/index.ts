@@ -104,7 +104,7 @@ const defaultOptions: Required<Omit<Options, "batchSize" | "fileExtensions">> = 
 
 // oxlint-disable-next-line unicorn/no-anonymous-default-export, import/no-default-export
 export default function (opts: Options = defaultOptions): AstroIntegration {
-	const options = { ...defaultOptions, ...opts }
+	const options: Options = { ...defaultOptions, ...opts, hooks: { ...defaultOptions.hooks, ...opts.hooks } }
 
 	return {
 		name: "astro-compressor",
