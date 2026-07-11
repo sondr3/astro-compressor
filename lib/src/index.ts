@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url"
 
 import type { AstroIntegration, AstroIntegrationLogger } from "astro"
 
+import { enabledFormats } from "#/plugin.js"
+
 import type { BrotliOptions, ZlibOptions, ZstdOptions } from "./compress.js"
 import { brotli, gzip, zstd } from "./compress.js"
 
@@ -104,6 +106,22 @@ export default function (opts: Options = defaultOptions): AstroIntegration {
 				const root = fileURLToPath(dir)
 				const entries = await fs.readdir(root, { withFileTypes: true, recursive: true })
 				const files = entries.map((p) => path.join(p.parentPath, p.name))
+
+				const formats = enabledFormats(options)
+				const enabled = Object.entries(formats)
+					.filter(([_, e]) => e)
+					.map(([n, _]) => n)
+				const disabled = Object.entries(formats)
+					.filter(([_, e]) => !e)
+					.map(([n, _]) => n)
+
+				if (enabled.length === 0) {
+					logger.warn(`no enabled formats, skipping :(`)
+				} else if (disabled.length === 0) {
+					logger.info(`compressing with ${enabled.join(", ")}`)
+				} else {
+					logger.info(`compressing with ${enabled.join(", ")} (${disabled.join(", ")} disabled)`)
+				}
 
 				await Promise.allSettled([
 					gzip(files, logger, options),
