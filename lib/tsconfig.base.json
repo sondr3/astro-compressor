@@ -1,7 +1,0 @@
-{
-	"extends": ["@sondr3/tsconfig/tsconfig.base.json", "@sondr3/tsconfig/tsconfig.node.json"],
-	"compilerOptions": {
-		"noUncheckedSideEffectImports": true
-	},
-	"exclude": ["coverage", "node_modules", "dist", "test"]
-}
