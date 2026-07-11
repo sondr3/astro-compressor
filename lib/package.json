@@ -30,7 +30,10 @@
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"imports": {
-		"#/*": "./src/*"
+		"#/*": {
+			"types": "./src/*",
+			"default": "./dist/*"
+		}
 	},
 	"scripts": {
 		"dev": "tsc --watch --incremental -p tsconfig.dev.json",
