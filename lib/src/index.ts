@@ -46,6 +46,18 @@ export interface Options {
 		 */
 		"compressor:file:after"?: (ctx: PostCompressionOptions) => PostHookResult | Promise<PostHookResult>
 	}
+	/**
+	 * Extensions to compress, must be in the format `.html`, `.css` etc
+	 *
+	 * @deprecated Use the new hooks in v2
+	 */
+	fileExtensions?: Array<string>
+	/**
+	 * Number of files to batch process
+	 *
+	 * @deprecated Concurrency is handled internally in v2
+	 */
+	batchSize?: number
 }
 
 // https://stackoverflow.com/a/41402498
@@ -64,7 +76,7 @@ const fileSize = (b: number): string => {
 	return (u ? res.toFixed(1) : res) + units[u]!
 }
 
-const defaultOptions: Required<Options> = {
+const defaultOptions: Required<Omit<Options, "batchSize" | "fileExtensions">> = {
 	gzip: true,
 	brotli: true,
 	zstd: true,
@@ -98,6 +110,14 @@ export default function (opts: Options = defaultOptions): AstroIntegration {
 		name: "astro-compressor",
 		hooks: {
 			"astro:build:done": async ({ dir, logger }) => {
+				if (opts.batchSize) {
+					logger.warn(`'batchSize' is unused in astro-compressor@2, and will be removed in v2.1`)
+				}
+
+				if (opts.fileExtensions) {
+					logger.warn(`'fileExtensions' were superseded by hooks in astro-compressor@2, and will be removed in v2.1`)
+				}
+
 				const root = fileURLToPath(dir)
 				const worker = new CompressionWorker(root, logger, options)
 
