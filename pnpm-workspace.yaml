@@ -1,6 +1,9 @@
 packages:
   - lib
   - test
+allowBuilds:
+  esbuild: true
+  lefthook: true
 catalog:
   astro: 7.0.7
 ignoredBuiltDependencies:
