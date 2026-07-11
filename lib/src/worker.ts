@@ -1,3 +1,6 @@
+import { promises as fs } from "node:fs"
+import path from "node:path"
+
 import type { AstroIntegrationLogger } from "astro"
 
 import { BrotliCompressor, GzipCompressor, ZstdCompressor } from "#/compressor.js"
@@ -9,12 +12,17 @@ export class CompressionWorker {
 	zstd: ZstdCompressor
 
 	protected readonly logger: AstroIntegrationLogger
+	protected readonly root: string
 
-	constructor(logger: AstroIntegrationLogger, options: Options) {
+	files: Array<string> = []
+
+	constructor(root: string, logger: AstroIntegrationLogger, options: Options) {
+		this.logger = logger
+		this.root = root
+
 		this.brotli = new BrotliCompressor(logger, options)
 		this.gzip = new GzipCompressor(logger, options)
 		this.zstd = new ZstdCompressor(logger, options)
-		this.logger = logger
 
 		const formats = this.enabledCompressors
 		const enabled = Object.entries(formats)
@@ -27,10 +35,17 @@ export class CompressionWorker {
 		if (enabled.length === 0) {
 			this.logger.warn(`no enabled formats, skipping :(`)
 		} else if (disabled.length === 0) {
-			this.logger.info(`compressing with ${enabled.join(", ")}`)
+			this.logger.info(`using ${enabled.join(", ")}`)
 		} else {
-			this.logger.info(`compressing with ${enabled.join(", ")} (${disabled.join(", ")} disabled)`)
+			this.logger.info(`using ${enabled.join(", ")} (${disabled.join(", ")} disabled)`)
 		}
+	}
+
+	async gather(): Promise<void> {
+		const entries = await fs.readdir(this.root, { withFileTypes: true, recursive: true })
+		const files = entries.map((p) => path.join(p.parentPath, p.name))
+		const stats = await Promise.all(files.map(async (file) => ({ file, size: (await fs.stat(file)).size })))
+		this.files = stats.toSorted((a, b) => b.size - a.size).map(({ file }) => file)
 	}
 
 	public get enabledCompressors(): Record<Format, boolean> {
