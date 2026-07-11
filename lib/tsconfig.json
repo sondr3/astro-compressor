@@ -2,6 +2,7 @@
 	"extends": ["@sondr3/tsconfig/tsconfig.base.json", "@sondr3/tsconfig/tsconfig.node.json"],
 	"compilerOptions": {
 		"rootDir": "./src",
+		"outDir": "./dist",
 		"paths": {
 			"#/*": ["./src/*"]
 		}
