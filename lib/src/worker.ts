@@ -1,4 +1,5 @@
 import { promises as fs } from "node:fs"
+import os from "node:os"
 import path from "node:path"
 
 import type { AstroIntegrationLogger } from "astro"
@@ -13,6 +14,7 @@ export class CompressionWorker {
 
 	protected readonly logger: AstroIntegrationLogger
 	protected readonly root: string
+	protected readonly concurrency = os.availableParallelism()
 
 	files: Array<string> = []
 
@@ -46,6 +48,26 @@ export class CompressionWorker {
 		const files = entries.map((p) => path.join(p.parentPath, p.name))
 		const stats = await Promise.all(files.map(async (file) => ({ file, size: (await fs.stat(file)).size })))
 		this.files = stats.toSorted((a, b) => b.size - a.size).map(({ file }) => file)
+	}
+
+	async compress(): Promise<void> {
+		const { gzip, zstd, brotli } = this.enabledCompressors
+
+		let next = 0
+		const worker = async (): Promise<void> => {
+			while (next < this.files.length) {
+				// oxlint-disable-next-line no-plusplus typescript/no-non-null-assertion
+				const file = this.files[next++]!
+				// oxlint-disable-next-line no-await-in-loop
+				if (brotli) await this.brotli.compress(file, {})
+				// oxlint-disable-next-line no-await-in-loop
+				if (gzip) await this.gzip.compress(file, {})
+				// oxlint-disable-next-line no-await-in-loop
+				if (zstd) await this.zstd.compress(file, {})
+			}
+		}
+
+		await Promise.all(Array.from({ length: Math.min(this.concurrency, this.files.length) }, worker))
 	}
 
 	public get enabledCompressors(): Record<Format, boolean> {
