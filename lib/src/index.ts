@@ -7,7 +7,6 @@ import type { AstroIntegration, AstroIntegrationLogger } from "astro"
 import { CompressionWorker } from "#/worker.js"
 
 import type { BrotliOptions, ZlibOptions, ZstdOptions } from "./compress.js"
-import { brotli, gzip, zstd } from "./compress.js"
 
 export const defaultFileExtensions = new Set([".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"])
 
@@ -109,11 +108,7 @@ export default function (opts: Options = defaultOptions): AstroIntegration {
 				try {
 					const start = hrtime.bigint()
 					await worker.gather()
-					await Promise.allSettled([
-						gzip(worker.files, logger, options),
-						brotli(worker.files, logger, options),
-						zstd(worker.files, logger, options),
-					])
+					await worker.compress()
 
 					const end = hrtime.bigint()
 					logger.info(`finished in ${(end - start) / BigInt(1000000)}ms\n`)
