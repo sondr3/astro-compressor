@@ -153,8 +153,8 @@ export default function (opts: Options): AstroIntegration {
 				} catch (e) {
 					if (e instanceof Error) {
 						logger.error(e.message)
-						throw e
 					}
+					throw e
 				}
 			},
 		},
