@@ -16,8 +16,6 @@ abstract class Compressor<O extends CompressionOptionsInner> {
 	abstract readonly ext: string
 	readonly enabled: boolean
 
-	protected abstract compressor: CompressorFn<O>
-
 	protected readonly options: O
 	protected hooks: Options["hooks"]
 	protected logger: AstroIntegrationLogger
@@ -25,6 +23,7 @@ abstract class Compressor<O extends CompressionOptionsInner> {
 	compressed = 0
 
 	protected abstract isEnabled(options: Options): boolean
+	protected abstract compressor(): CompressorFn<O>
 	protected abstract mergeOptions(options: Options): O
 
 	constructor(logger: AstroIntegrationLogger, options: Options) {
@@ -35,6 +34,7 @@ abstract class Compressor<O extends CompressionOptionsInner> {
 	}
 
 	async run(files: Array<string>, concurrency: number): Promise<void> {
+		const compressor = this.compressor()
 		let next = 0
 		const start = hrtime.bigint()
 
@@ -43,7 +43,7 @@ abstract class Compressor<O extends CompressionOptionsInner> {
 				// oxlint-disable-next-line no-plusplus typescript/no-non-null-assertion
 				const file = files[next++]!
 				// oxlint-disable-next-line no-await-in-loop
-				await this.compress(file)
+				await this.compress(compressor, file)
 			}
 		}
 
@@ -55,7 +55,7 @@ abstract class Compressor<O extends CompressionOptionsInner> {
 		)
 	}
 
-	async compress(file: string): Promise<void> {
+	async compress(compressor: CompressorFn<O>, file: string): Promise<void> {
 		if (typeof this.hooks?.["compressor:file:before"] === "function") {
 			const shouldCompress = await this.hooks?.["compressor:file:before"]({
 				filePath: file,
@@ -68,7 +68,7 @@ abstract class Compressor<O extends CompressionOptionsInner> {
 
 		const dest = `${file}.${this.ext}`
 		const source = await fs.readFile(file)
-		const compressed = await this.compressor(source, this.options)
+		const compressed = await compressor(source, this.options)
 		await fs.writeFile(dest, compressed)
 
 		if (typeof this.hooks?.["compressor:file:after"] === "function") {
@@ -92,7 +92,10 @@ abstract class Compressor<O extends CompressionOptionsInner> {
 export class GzipCompressor extends Compressor<ZlibOptions> {
 	readonly name: Format = "gzip"
 	readonly ext: string = "gz"
-	protected compressor: CompressorFn<ZlibOptions> = promisify(zlib.gzip)
+
+	protected override compressor(): CompressorFn<ZlibOptions> {
+		return promisify(zlib.gzip)
+	}
 
 	protected override isEnabled(options: Options): boolean {
 		return options.gzip !== null && options.gzip !== false
@@ -101,17 +104,17 @@ export class GzipCompressor extends Compressor<ZlibOptions> {
 	protected override mergeOptions(options: Options): ZlibOptions {
 		const defaults: ZlibOptions = { level: zlib.constants.Z_BEST_COMPRESSION }
 		const opts = typeof options.gzip === "object" ? options.gzip : {}
-		return {
-			...defaults,
-			...opts,
-		}
+		return { ...defaults, ...opts }
 	}
 }
 
 export class BrotliCompressor extends Compressor<BrotliOptions> {
 	readonly name: Format = "brotli"
 	readonly ext: string = "br"
-	protected compressor: CompressorFn<BrotliOptions> = promisify(zlib.brotliCompress)
+
+	protected override compressor(): CompressorFn<BrotliOptions> {
+		return promisify(zlib.brotliCompress)
+	}
 
 	protected override isEnabled(options: Options): boolean {
 		return options.brotli !== null && options.brotli !== false
@@ -124,21 +127,17 @@ export class BrotliCompressor extends Compressor<BrotliOptions> {
 			},
 		}
 		const opts = typeof options.brotli === "object" ? options.brotli : {}
-		return {
-			...defaults,
-			...opts,
-			params: {
-				...defaults.params,
-				...opts.params,
-			},
-		}
+		return { ...defaults, ...opts, params: { ...defaults.params, ...opts.params } }
 	}
 }
 
 export class ZstdCompressor extends Compressor<ZstdOptions> {
 	readonly name: Format = "zstd"
 	readonly ext: string = "zst"
-	protected compressor: CompressorFn<ZstdOptions> = promisify(zlib.zstdCompress)
+
+	protected override compressor(): CompressorFn<ZstdOptions> {
+		return promisify(zlib.zstdCompress)
+	}
 
 	protected override isEnabled(options: Options): boolean {
 		return typeof zlib.createZstdCompress === "function" && options.zstd !== null && options.zstd !== false
@@ -154,13 +153,6 @@ export class ZstdCompressor extends Compressor<ZstdOptions> {
 			},
 		}
 		const opts = typeof options.zstd === "object" ? options.zstd : {}
-		return {
-			...defaults,
-			...opts,
-			params: {
-				...defaults.params,
-				...opts.params,
-			},
-		}
+		return { ...defaults, ...opts, params: { ...defaults.params, ...opts.params } }
 	}
 }
