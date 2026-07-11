@@ -16,7 +16,7 @@ export default defineConfig({
 			},
 		},
 		{
-			files: ["test/**"],
+			files: ["integration-tests/**"],
 			rules: {
 				"unicorn/filename-case": "off",
 				"import/unambiguous": "off",
