@@ -1,12 +1,11 @@
 import path from "node:path"
 import { hrtime } from "node:process"
 import { fileURLToPath } from "node:url"
+import type { BrotliOptions, ZlibOptions, ZstdOptions } from "node:zlib"
 
 import type { AstroIntegration, AstroIntegrationLogger } from "astro"
 
 import { CompressionWorker } from "#/worker.js"
-
-import type { BrotliOptions, ZlibOptions, ZstdOptions } from "./compress.js"
 
 export const defaultFileExtensions = new Set([".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"])
 
@@ -37,8 +36,6 @@ export interface Options {
 	brotli?: boolean | BrotliOptions
 	/** Enable zstd compression */
 	zstd?: boolean | ZstdOptions
-	/** Number of files to batch process */
-	batchSize?: number
 	hooks?: {
 		/**
 		 * A pre-compression hook to run your own filter over the input files
@@ -71,7 +68,6 @@ const defaultOptions: Required<Options> = {
 	gzip: true,
 	brotli: true,
 	zstd: true,
-	batchSize: 10,
 	hooks: {
 		"compressor:file:before": ({ filePath, logger, format }) => {
 			if (!defaultFileExtensions.has(path.extname(filePath))) {
