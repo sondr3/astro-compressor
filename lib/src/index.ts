@@ -112,17 +112,17 @@ const defaultOptions: Required<Omit<Options, "batchSize" | "fileExtensions">> = 
 
 // oxlint-disable-next-line unicorn/no-anonymous-default-export, import/no-default-export
 export default function (opts: Options): AstroIntegration {
-	const options: Options = { ...defaultOptions, ...opts, hooks: { ...defaultOptions.hooks, ...opts.hooks } }
+	const options: Options = { ...defaultOptions, ...opts, hooks: { ...defaultOptions.hooks, ...opts?.hooks } }
 
 	return {
 		name: "astro-compressor",
 		hooks: {
 			"astro:build:done": async ({ dir, logger }) => {
-				if (opts.batchSize) {
+				if (opts?.batchSize) {
 					logger.warn(`'batchSize' is unused in astro-compressor@2, and will be removed in v2.1`)
 				}
 
-				if (opts.fileExtensions) {
+				if (opts?.fileExtensions) {
 					logger.warn(`'fileExtensions' were superseded by hooks in astro-compressor@2, and will be removed in v2.1`)
 					if (typeof opts.hooks?.["compressor:file:before"] === "function") {
 						logger.error(`both 'fileExtensions' and 'compressor:file:before' defined, remove 'fileExtensions'`)
