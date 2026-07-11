@@ -47,13 +47,10 @@ const compress = async <O extends CompressionOptionsInner>(
 			batch.map(async (file) => {
 				if (typeof hooks?.["compressor:file:before"] === "function") {
 					const shouldCompress = await hooks?.["compressor:file:before"]({ filePath: file, logger, format: name })
-					if (shouldCompress === "keep") {
-						compressed += 1
-					} else {
-						return
-					}
+					if (shouldCompress === "skip") return
 				}
 
+				compressed += 1
 				const outputFile = `${file}.${compressedFileNames}`
 				const source = createReadStream(file)
 				const destination = createWriteStream(outputFile)
