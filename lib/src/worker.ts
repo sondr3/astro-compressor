@@ -15,9 +15,7 @@ export class CompressionWorker {
 		this.gzip = new GzipCompressor(logger, options)
 		this.zstd = new ZstdCompressor(logger, options)
 		this.logger = logger
-	}
 
-	logInit(): void {
 		const formats = this.enabledCompressors
 		const enabled = Object.entries(formats)
 			.filter(([_, e]) => e)
