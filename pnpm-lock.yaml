@@ -14,6 +14,12 @@ importers:
 
   .:
     devDependencies:
+      '@sondr3/oxfmt':
+        specifier: 0.1.2
+        version: 0.1.2(oxfmt@0.58.0)
+      '@sondr3/oxlint':
+        specifier: 0.1.1
+        version: 0.1.1(oxlint-tsgolint@0.24.0)(oxlint@1.73.0(oxlint-tsgolint@0.24.0))
       lefthook:
         specifier: 2.1.10
         version: 2.1.10
@@ -1108,6 +1114,17 @@ packages:
 
   '@shikijs/vscode-textmate@10.0.2':
     resolution: {integrity: sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==}
+
+  '@sondr3/oxfmt@0.1.2':
+    resolution: {integrity: sha512-awwdi0HjJHgjRh7Ri3YBm+C8tehndEjjogFBwvEmvh4rdv/IBsKsZbgYS3WsMeaDeaH45JrKB78qas5n2XNLyQ==}
+    peerDependencies:
+      oxfmt: '>= 0.44.0'
+
+  '@sondr3/oxlint@0.1.1':
+    resolution: {integrity: sha512-MKD3oGD9pSonezW7spFh384k1tnsrjoIJG+I8HJ+bNCnf1NiCSNQNKaKDvPCFtrJkmw2NYxpLaXF9u6WqbhmnA==}
+    peerDependencies:
+      oxlint: '>= 1'
+      oxlint-tsgolint: '>= 0.20.0'
 
   '@sondr3/tsconfig@0.10.0':
     resolution: {integrity: sha512-ckiQVq0utV9cpNpXrYdJ+PDKi89SP9eiPVLdVQL96rbc1e6k47WTU5Fdqj5tfCCJ7XFowkLQgqqEHhgmAStMQw==}
@@ -2859,6 +2876,15 @@ snapshots:
       '@types/hast': 3.0.5
 
   '@shikijs/vscode-textmate@10.0.2': {}
+
+  '@sondr3/oxfmt@0.1.2(oxfmt@0.58.0)':
+    dependencies:
+      oxfmt: 0.58.0
+
+  '@sondr3/oxlint@0.1.1(oxlint-tsgolint@0.24.0)(oxlint@1.73.0(oxlint-tsgolint@0.24.0))':
+    dependencies:
+      oxlint: 1.73.0(oxlint-tsgolint@0.24.0)
+      oxlint-tsgolint: 0.24.0
 
   '@sondr3/tsconfig@0.10.0(typescript@7.0.2)':
     dependencies:

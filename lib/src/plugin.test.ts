@@ -1,7 +1,7 @@
-import { spawnSync } from "node:child_process";
-import path from "node:path";
+import { spawnSync } from "node:child_process"
+import path from "node:path"
 
-import { expect, test } from "vitest";
+import { expect, test } from "vitest"
 
 test("astro build outputs expected log", () => {
 	const build = spawnSync("pnpm", ["build"], {
@@ -10,11 +10,11 @@ test("astro build outputs expected log", () => {
 		cwd: path.join(process.cwd(), "..", "test"),
 		// oxlint-disable-next-line node/no-process-env
 		env: { ...process.env, NO_COLOR: "1" },
-	});
+	})
 
-	expect(build.stdout).toContain("[astro-compressor] gzip     compressed 2 files");
-	expect(build.stdout).toContain("[astro-compressor] brotli   compressed 2 files");
-	expect(build.stdout).toContain("[astro-compressor] zstd     compressed 2 files");
-	expect(build.stderr).toBeFalsy();
-	expect(build.status).toBe(0);
-});
+	expect(build.stdout).toContain("[astro-compressor] gzip     compressed 2 files")
+	expect(build.stdout).toContain("[astro-compressor] brotli   compressed 2 files")
+	expect(build.stdout).toContain("[astro-compressor] zstd     compressed 2 files")
+	expect(build.stderr).toBeFalsy()
+	expect(build.status).toBe(0)
+})
