@@ -1,4 +1,5 @@
 import fs from "node:fs/promises"
+import { hrtime } from "node:process"
 import { promisify } from "node:util"
 import type { BrotliOptions, ZlibOptions, ZstdOptions } from "node:zlib"
 import zlib from "node:zlib"
@@ -29,6 +30,27 @@ abstract class Compressor<O extends CompressionOptionsInner> {
 		this.logger = logger
 		this.enabled = this.isEnabled(options)
 		this.hooks = options.hooks
+	}
+
+	async run(files: Array<string>, concurrency: number, options?: O): Promise<void> {
+		let next = 0
+		const start = hrtime.bigint()
+
+		const worker = async (): Promise<void> => {
+			while (next < files.length) {
+				// oxlint-disable-next-line no-plusplus typescript/no-non-null-assertion
+				const file = files[next++]!
+				// oxlint-disable-next-line no-await-in-loop
+				await this.compress(file, options)
+			}
+		}
+
+		await Promise.all(Array.from({ length: Math.min(concurrency, files.length) }, worker))
+
+		const end = hrtime.bigint()
+		this.logger.info(
+			`${this.name.padEnd(8, " ")} compressed ${this.compressed} files in ${(end - start) / BigInt(1000000)}ms`,
+		)
 	}
 
 	async compress(file: string, options?: O): Promise<void> {
