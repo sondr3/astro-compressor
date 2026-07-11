@@ -3,7 +3,9 @@ import { defineConfig } from "oxlint"
 
 export default defineConfig({
 	extends: [config],
-	rules: {},
+	rules: {
+		"oxc/no-optional-chaining": "off",
+	},
 	overrides: [
 		{
 			files: ["*.config.{ts,mjs}", "index.ts"],
