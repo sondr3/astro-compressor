@@ -53,25 +53,12 @@ export class CompressionWorker {
 	async compress(): Promise<void> {
 		const { gzip, zstd, brotli } = this.enabledCompressors
 
-		let next = 0
-		const worker = async (): Promise<void> => {
-			while (next < this.files.length) {
-				// oxlint-disable-next-line no-plusplus typescript/no-non-null-assertion
-				const file = this.files[next++]!
-				// oxlint-disable-next-line no-await-in-loop
-				if (brotli) await this.brotli.compress(file, {})
-				// oxlint-disable-next-line no-await-in-loop
-				if (gzip) await this.gzip.compress(file, {})
-				// oxlint-disable-next-line no-await-in-loop
-				if (zstd) await this.zstd.compress(file, {})
-			}
-		}
+		let runners = []
+		if (gzip) runners.push(this.gzip.run(this.files, this.concurrency, {}))
+		if (zstd) runners.push(this.zstd.run(this.files, this.concurrency, {}))
+		if (brotli) runners.push(this.brotli.run(this.files, this.concurrency, {}))
 
-		await Promise.all(Array.from({ length: Math.min(this.concurrency, this.files.length) }, worker))
-
-		this.logger.info(`${this.brotli.name.padEnd(8, " ")} compressed ${this.brotli.compressed} files`)
-		this.logger.info(`${this.gzip.name.padEnd(8, " ")} compressed ${this.gzip.compressed} files`)
-		this.logger.info(`${this.zstd.name.padEnd(8, " ")} compressed ${this.zstd.compressed} files`)
+		await Promise.all(runners)
 	}
 
 	public get enabledCompressors(): Record<Format, boolean> {
