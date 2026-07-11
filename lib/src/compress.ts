@@ -1,6 +1,6 @@
 import { createReadStream, createWriteStream } from "node:fs";
 import { readdir } from "node:fs/promises";
-import { extname, resolve } from "node:path";
+import path from "node:path";
 import { hrtime } from "node:process";
 import { promises as stream } from "node:stream";
 import type { BrotliOptions, ZlibOptions, ZstdOptions } from "node:zlib";
@@ -22,7 +22,7 @@ interface CompressionOptions<O = CompressionOptionsInner> {
 export async function* walkDir(dir: string, extensions: Array<string>): AsyncGenerator<string> {
 	const entries = await readdir(dir, { withFileTypes: true });
 	for (const entry of entries) {
-		const name = resolve(dir, entry.name);
+		const name = path.resolve(dir, entry.name);
 		if (entry.isDirectory()) {
 			yield* walkDir(name, extensions);
 		} else if (filterFile(entry.name, extensions)) {
@@ -32,7 +32,7 @@ export async function* walkDir(dir: string, extensions: Array<string>): AsyncGen
 }
 
 const filterFile = (file: string, extensions: Array<string>): boolean => {
-	return extensions.some((ext) => extname(file) === ext);
+	return extensions.some((ext) => path.extname(file) === ext);
 };
 
 const mergeOptions = <T extends CompressionOptionsInner>(defaults: T, overrides: T | boolean | undefined): T => ({
@@ -57,9 +57,9 @@ const compress = async <O extends CompressionOptionsInner>(
 		const batch = files.slice(i, i + batchSize);
 		// oxlint-disable-next-line no-await-in-loop, intentional batching
 		await Promise.all(
-			batch.map(async (path) => {
-				const source = createReadStream(path);
-				const destination = createWriteStream(`${path}.${compressedFileNames}`);
+			batch.map(async (file) => {
+				const source = createReadStream(file);
+				const destination = createWriteStream(`${file}.${compressedFileNames}`);
 				const comp = compressor(options);
 				await stream.pipeline(source, comp, destination);
 			}),

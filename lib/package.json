@@ -29,17 +29,20 @@
 	"type": "module",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
+	"imports": {
+		"#/*": "./src/*"
+	},
 	"scripts": {
-		"dev": "tsc --watch --incremental",
+		"dev": "tsc --watch --incremental -p tsconfig.dev.json",
 		"build": "rm -rf dist && tsc -p tsconfig.build.json",
 		"test": "vitest"
 	},
 	"devDependencies": {
 		"@sondr3/tsconfig": "0.10.0",
-		"@types/node": "25.6.0",
+		"@types/node": "26.1.1",
 		"astro": "catalog:",
-		"typescript": "6.0.3",
-		"vitest": "4.1.5"
+		"typescript": "7.0.2",
+		"vitest": "4.1.10"
 	},
 	"engines": {
 		"node": ">=22"

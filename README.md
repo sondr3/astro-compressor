@@ -24,6 +24,7 @@
 - [Usage](#usage)
   - [Configuration](#configuration)
 - [License](#license)
+
 </details>
 
 > [!NOTE]
