@@ -108,11 +108,6 @@ export const brotli = async (files: Array<string>, logger: AstroIntegrationLogge
 }
 
 export const zstd = async (files: Array<string>, logger: AstroIntegrationLogger, options: Options): Promise<void> => {
-	if (typeof zlib.createZstdCompress !== "function") {
-		logger.warn("zstd compression is not supported in this Node.js version.")
-		return
-	}
-
 	await compress("zstd", "zst", zlib.createZstdCompress, logger, {
 		files,
 		enabled: options.zstd === true || typeof options.zstd === "object",
