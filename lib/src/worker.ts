@@ -45,7 +45,7 @@ export class CompressionWorker {
 
 	async gather(): Promise<void> {
 		const entries = await fs.readdir(this.root, { withFileTypes: true, recursive: true })
-		const files = entries.map((p) => path.join(p.parentPath, p.name))
+		const files = entries.filter((p) => p.isFile()).map((p) => path.join(p.parentPath, p.name))
 		const stats = await Promise.all(files.map(async (file) => ({ file, size: (await fs.stat(file)).size })))
 		this.files = stats.toSorted((a, b) => b.size - a.size).map(({ file }) => file)
 	}
