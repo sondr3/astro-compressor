@@ -1,4 +1,12 @@
 {
-	"extends": ["./tsconfig.base.json"],
-	"include": ["src"]
+	"extends": ["@sondr3/tsconfig/tsconfig.base.json", "@sondr3/tsconfig/tsconfig.node.json"],
+	"compilerOptions": {
+		"rootDir": "./src",
+		"paths": {
+			"#/*": ["./src/*"]
+		}
+	},
+	"files": [],
+	"exclude": ["coverage", "node_modules", "dist", "test"],
+	"references": [{ "path": "./tsconfig.dev.json" }, { "path": "./tsconfig.build.json" }]
 }
