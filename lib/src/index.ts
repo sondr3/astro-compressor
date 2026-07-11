@@ -76,19 +76,28 @@ const fileSize = (b: number): string => {
 	return (u ? res.toFixed(1) : res) + units[u]!
 }
 
+const defaultPreCompressionHook = (
+	extensions: Set<string>,
+	filePath: string,
+	logger: AstroIntegrationLogger,
+	format: Format,
+): PreHookResult => {
+	if (!extensions.has(path.extname(filePath))) {
+		logger.debug(`skipping ${filePath}`)
+		return "skip"
+	}
+
+	logger.debug(`compressing ${filePath} with ${format}`)
+	return "keep"
+}
+
 const defaultOptions: Required<Omit<Options, "batchSize" | "fileExtensions">> = {
 	gzip: true,
 	brotli: true,
 	zstd: true,
 	hooks: {
 		"compressor:file:before": ({ filePath, logger, format }) => {
-			if (!defaultFileExtensions.has(path.extname(filePath))) {
-				logger.debug(`skipping ${filePath}`)
-				return "skip"
-			}
-
-			logger.debug(`compressing ${filePath} with ${format}`)
-			return "keep"
+			return defaultPreCompressionHook(defaultFileExtensions, filePath, logger, format)
 		},
 		"compressor:file:after": async ({ inputPath, inputSize, outputPath, outputSize, format, logger }) => {
 			if (outputSize >= inputSize) {
@@ -103,7 +112,7 @@ const defaultOptions: Required<Omit<Options, "batchSize" | "fileExtensions">> = 
 }
 
 // oxlint-disable-next-line unicorn/no-anonymous-default-export, import/no-default-export
-export default function (opts: Options = defaultOptions): AstroIntegration {
+export default function (opts: Options): AstroIntegration {
 	const options: Options = { ...defaultOptions, ...opts, hooks: { ...defaultOptions.hooks, ...opts.hooks } }
 
 	return {
@@ -116,6 +125,19 @@ export default function (opts: Options = defaultOptions): AstroIntegration {
 
 				if (opts.fileExtensions) {
 					logger.warn(`'fileExtensions' were superseded by hooks in astro-compressor@2, and will be removed in v2.1`)
+					if (typeof opts.hooks?.["compressor:file:before"] === "function") {
+						logger.error(`both 'fileExtensions' and 'compressor:file:before' defined, remove 'fileExtensions'`)
+						throw new Error()
+					}
+
+					const oldstensions = new Set(opts.fileExtensions)
+					options.hooks = {
+						...options.hooks,
+						"compressor:file:before": (params): PreHookResult => {
+							return defaultPreCompressionHook(oldstensions, params.filePath, params.logger, params.format)
+						},
+					}
+					logger.warn(`shimming 'compressor:file:before' hook with 'fileExtensions'`)
 				}
 
 				const root = fileURLToPath(dir)
