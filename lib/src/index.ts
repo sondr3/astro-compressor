@@ -1,5 +1,5 @@
-import { promises as fs } from "node:fs"
 import path from "node:path"
+import { hrtime } from "node:process"
 import { fileURLToPath } from "node:url"
 
 import type { AstroIntegration, AstroIntegrationLogger } from "astro"
@@ -104,18 +104,25 @@ export default function (opts: Options = defaultOptions): AstroIntegration {
 		hooks: {
 			"astro:build:done": async ({ dir, logger }) => {
 				const root = fileURLToPath(dir)
-				const entries = await fs.readdir(root, { withFileTypes: true, recursive: true })
-				const files = entries.map((p) => path.join(p.parentPath, p.name))
+				const worker = new CompressionWorker(root, logger, options)
 
-				const worker = new CompressionWorker(logger, options)
-				worker.logInit()
+				try {
+					const start = hrtime.bigint()
+					await worker.gather()
+					await Promise.allSettled([
+						gzip(worker.files, logger, options),
+						brotli(worker.files, logger, options),
+						zstd(worker.files, logger, options),
+					])
 
-				await Promise.allSettled([
-					gzip(files, logger, options),
-					brotli(files, logger, options),
-					zstd(files, logger, options),
-				])
-				logger.info("Compression finished\n")
+					const end = hrtime.bigint()
+					logger.info(`finished in ${(end - start) / BigInt(1000000)}ms\n`)
+				} catch (e) {
+					if (e instanceof Error) {
+						logger.error(e.message)
+						throw e
+					}
+				}
 			},
 		},
 	}
