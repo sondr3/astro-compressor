@@ -105,7 +105,7 @@ const defaultOptions: Required<Omit<Options, "batchSize" | "fileExtensions">> = 
 				return "remove"
 			}
 
-			logger.debug(`compressed ${inputPath} with ${format} from ${fileSize(inputSize)} to ${fileSize(outputSize)} b`)
+			logger.debug(`compressed ${inputPath} with ${format} from ${fileSize(inputSize)} to ${fileSize(outputSize)}`)
 			return "keep"
 		},
 	},
