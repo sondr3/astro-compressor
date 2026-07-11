@@ -54,9 +54,9 @@ export class CompressionWorker {
 		const { gzip, zstd, brotli } = this.enabledCompressors
 
 		let runners = []
-		if (gzip) runners.push(this.gzip.run(this.files, this.concurrency, {}))
-		if (zstd) runners.push(this.zstd.run(this.files, this.concurrency, {}))
-		if (brotli) runners.push(this.brotli.run(this.files, this.concurrency, {}))
+		if (gzip) runners.push(this.gzip.run(this.files, this.concurrency))
+		if (zstd) runners.push(this.zstd.run(this.files, this.concurrency))
+		if (brotli) runners.push(this.brotli.run(this.files, this.concurrency))
 
 		await Promise.all(runners)
 	}
