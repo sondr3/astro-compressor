@@ -11,8 +11,7 @@ export const defaultFileExtensions = new Set([".css", ".js", ".html", ".xml", ".
 
 export type Format = "gzip" | "brotli" | "zstd"
 
-export type PreHookResult = "keep" | "skip"
-export type PostHookResult = "keep" | "remove"
+export type HookResult = "keep" | "skip"
 
 export interface PreCompressionOptions {
 	filePath: string
@@ -40,11 +39,11 @@ export interface Options {
 		/**
 		 * A pre-compression hook to run your own filter over the input files
 		 */
-		"compressor:file:before"?: (ctx: PreCompressionOptions) => PreHookResult | Promise<PreHookResult>
+		"compressor:file:before"?: (ctx: PreCompressionOptions) => HookResult | Promise<HookResult>
 		/**
 		 * A post-compression hook to run your own filter over the output files
 		 */
-		"compressor:file:after"?: (ctx: PostCompressionOptions) => PostHookResult | Promise<PostHookResult>
+		"compressor:file:after"?: (ctx: PostCompressionOptions) => HookResult | Promise<HookResult>
 	}
 	/**
 	 * Extensions to compress, must be in the format `.html`, `.css` etc
@@ -81,7 +80,7 @@ const defaultPreCompressionHook = (
 	filePath: string,
 	logger: AstroIntegrationLogger,
 	format: Format,
-): PreHookResult => {
+): HookResult => {
 	if (!extensions.has(path.extname(filePath))) {
 		logger.debug(`skipping ${filePath}`)
 		return "skip"
@@ -102,7 +101,7 @@ const defaultOptions: Required<Omit<Options, "batchSize" | "fileExtensions">> = 
 		"compressor:file:after": async ({ inputPath, inputSize, outputPath, outputSize, format, logger }) => {
 			if (outputSize >= inputSize) {
 				logger.debug(`${outputPath} output size is larger than its input: ${outputSize} >= ${inputSize}`)
-				return "remove"
+				return "skip"
 			}
 
 			logger.debug(`compressed ${inputPath} with ${format} from ${fileSize(inputSize)} to ${fileSize(outputSize)}`)
@@ -133,7 +132,7 @@ export default function (opts: Options): AstroIntegration {
 					const oldstensions = new Set(opts.fileExtensions)
 					options.hooks = {
 						...options.hooks,
-						"compressor:file:before": (params): PreHookResult => {
+						"compressor:file:before": (params): HookResult => {
 							return defaultPreCompressionHook(oldstensions, params.filePath, params.logger, params.format)
 						},
 					}
