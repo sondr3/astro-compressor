@@ -38,7 +38,7 @@
 	"scripts": {
 		"dev": "tsc --watch --incremental -p tsconfig.dev.json",
 		"build": "rm -rf dist && tsc -p tsconfig.build.json",
-		"test": "vitest"
+		"test": "vitest src"
 	},
 	"devDependencies": {
 		"@sondr3/tsconfig": "0.10.0",
