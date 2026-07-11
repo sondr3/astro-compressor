@@ -5,6 +5,8 @@ export default defineConfig({
 	extends: [config],
 	rules: {
 		"oxc/no-optional-chaining": "off",
+		"typescript/explicit-member-accessibility": "off",
+		"eslint/class-methods-use-this": ["error", { ignoreOverrideMethods: true }],
 	},
 	overrides: [
 		{
