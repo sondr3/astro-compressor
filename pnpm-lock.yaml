@@ -36,6 +36,54 @@ importers:
         specifier: 0.24.0
         version: 0.24.0
 
+  integration-tests/disabled:
+    dependencies:
+      astro:
+        specifier: 'catalog:'
+        version: 7.0.7(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.2)(@types/node@26.1.1)(yaml@2.9.0)
+    devDependencies:
+      '@astrojs/check':
+        specifier: 0.9.9
+        version: 0.9.9(prettier@3.9.5)(typescript@6.0.3)
+      astro-compressor:
+        specifier: workspace:^
+        version: link:../../lib
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
+  integration-tests/happy-path:
+    dependencies:
+      astro:
+        specifier: 'catalog:'
+        version: 7.0.7(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.2)(@types/node@26.1.1)(yaml@2.9.0)
+    devDependencies:
+      '@astrojs/check':
+        specifier: 0.9.9
+        version: 0.9.9(prettier@3.9.5)(typescript@6.0.3)
+      astro-compressor:
+        specifier: workspace:^
+        version: link:../../lib
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
+  integration-tests/hooks:
+    dependencies:
+      astro:
+        specifier: 'catalog:'
+        version: 7.0.7(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.2)(@types/node@26.1.1)(yaml@2.9.0)
+    devDependencies:
+      '@astrojs/check':
+        specifier: 0.9.9
+        version: 0.9.9(prettier@3.9.5)(typescript@6.0.3)
+      astro-compressor:
+        specifier: workspace:^
+        version: link:../../lib
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
   lib:
     devDependencies:
       '@sondr3/tsconfig':
@@ -53,22 +101,6 @@ importers:
       vitest:
         specifier: 4.1.10
         version: 4.1.10(@types/node@26.1.1)(vite@8.1.4(@types/node@26.1.1)(esbuild@0.28.1)(yaml@2.9.0))
-
-  test:
-    dependencies:
-      astro:
-        specifier: 'catalog:'
-        version: 7.0.7(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.2)(@types/node@26.1.1)(yaml@2.9.0)
-    devDependencies:
-      '@astrojs/check':
-        specifier: 0.9.9
-        version: 0.9.9(prettier@3.9.5)(typescript@6.0.3)
-      astro-compressor:
-        specifier: workspace:^
-        version: link:../lib
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
 
 packages:
 
