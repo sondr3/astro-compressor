@@ -44,8 +44,11 @@ export class CompressionWorker {
 	}
 
 	async gather(): Promise<void> {
+		const exts = new Set(["gz", "br", "zst"])
 		const entries = await fs.readdir(this.root, { withFileTypes: true, recursive: true })
-		const files = entries.filter((p) => p.isFile()).map((p) => path.join(p.parentPath, p.name))
+		const files = entries
+			.filter((p) => p.isFile() && !exts.has(path.extname(p.name)))
+			.map((p) => path.join(p.parentPath, p.name))
 		const stats = await Promise.all(files.map(async (file) => ({ file, size: (await fs.stat(file)).size })))
 		this.files = stats.toSorted((a, b) => b.size - a.size).map(({ file }) => file)
 	}
