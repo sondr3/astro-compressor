@@ -1,74 +1,71 @@
-import { promises as fs } from "node:fs"
-import os from "node:os"
+import { type Dirent, promises as fs } from "node:fs"
 import path from "node:path"
 
 import type { AstroIntegrationLogger } from "astro"
 
-import { BrotliCompressor, GzipCompressor, ZstdCompressor } from "#/compressor.js"
+import type { TaskResponse } from "#/compression-worker.js"
+import { BrotliCompressor, Compressor, GzipCompressor, type OptionsMap, ZstdCompressor } from "#/compressor.js"
 import type { Format, Options } from "#/index.js"
+import type { WorkerPool } from "#/worker-pool.js"
 
-export class CompressionWorker {
-	brotli: BrotliCompressor
-	gzip: GzipCompressor
-	zstd: ZstdCompressor
+export const compressors: { [K in Format]: Compressor<K> } = {
+	brotli: new BrotliCompressor(),
+	gzip: new GzipCompressor(),
+	zstd: new ZstdCompressor(),
+}
 
-	protected readonly logger: AstroIntegrationLogger
-	protected readonly root: string
-	protected readonly concurrency = os.availableParallelism()
+export const findFiles = async (
+	root: string,
+	logger: AstroIntegrationLogger,
+	filter: (ctx: { entry: Dirent; logger: AstroIntegrationLogger }) => boolean,
+): Promise<Array<string>> => {
+	const entries = await fs.readdir(root, { withFileTypes: true, recursive: true })
+	const files = entries
+		.filter((p) => p.isFile() && filter({ entry: p, logger }))
+		.map((p) => path.join(p.parentPath, p.name))
+	const stats = await Promise.all(files.map(async (file) => ({ file, size: (await fs.stat(file)).size })))
+	return stats.toSorted((a, b) => b.size - a.size).map(({ file }) => file)
+}
 
-	files: Array<string> = []
-
-	constructor(root: string, logger: AstroIntegrationLogger, options: Options) {
-		this.logger = logger
-		this.root = root
-
-		this.brotli = new BrotliCompressor(logger, options)
-		this.gzip = new GzipCompressor(logger, options)
-		this.zstd = new ZstdCompressor(logger, options)
-
-		const formats = this.enabledCompressors
-		const enabled = Object.entries(formats)
-			.filter(([_, e]) => e)
-			.map(([n, _]) => n)
-		const disabled = Object.entries(formats)
-			.filter(([_, e]) => !e)
-			.map(([n, _]) => n)
-
-		if (enabled.length === 0) {
-			this.logger.warn(`no enabled formats, skipping :(`)
-		} else if (disabled.length === 0) {
-			this.logger.info(`using ${enabled.join(", ")}`)
-		} else {
-			this.logger.info(`using ${enabled.join(", ")} (${disabled.join(", ")} disabled)`)
-		}
+export const queueTask = async <N extends Format>(
+	file: string,
+	compressor: Compressor<N>,
+	options: OptionsMap[N],
+	pool: WorkerPool<TaskResponse>,
+	logger: AstroIntegrationLogger,
+	hooks?: Options["hooks"],
+): Promise<void> => {
+	if (typeof hooks?.["compressor:file:before"] === "function") {
+		const shouldCompress = await hooks?.["compressor:file:before"]({
+			filePath: file,
+			logger: logger,
+			format: compressor.name,
+		})
+		if (shouldCompress === "skip") return
 	}
 
-	async gather(): Promise<void> {
-		const exts = new Set(["gz", "br", "zst"])
-		const entries = await fs.readdir(this.root, { withFileTypes: true, recursive: true })
-		const files = entries
-			.filter((p) => p.isFile() && !exts.has(path.extname(p.name)))
-			.map((p) => path.join(p.parentPath, p.name))
-		const stats = await Promise.all(files.map(async (file) => ({ file, size: (await fs.stat(file)).size })))
-		this.files = stats.toSorted((a, b) => b.size - a.size).map(({ file }) => file)
-	}
+	const source = await fs.readFile(file)
+	const inputSize = source.byteLength
+	const res = await pool.execute({
+		file: file,
+		source: source.buffer,
+		options: options,
+		format: compressor.name,
+	})
 
-	async compress(): Promise<void> {
-		const { gzip, zstd, brotli } = this.enabledCompressors
+	const shouldRemove =
+		typeof hooks?.["compressor:file:after"] === "function"
+			? await hooks?.["compressor:file:after"]({
+					inputPath: file,
+					inputSize,
+					outputPath: `${file}.${compressor.ext}`,
+					outputSize: res.output.byteLength,
+					format: compressor.name,
+					logger: logger,
+				})
+			: "keep"
 
-		let runners = []
-		if (gzip) runners.push(this.gzip.run(this.files, this.concurrency))
-		if (zstd) runners.push(this.zstd.run(this.files, this.concurrency))
-		if (brotli) runners.push(this.brotli.run(this.files, this.concurrency))
-
-		await Promise.all(runners)
-	}
-
-	public get enabledCompressors(): Record<Format, boolean> {
-		return {
-			brotli: this.brotli.enabled,
-			gzip: this.gzip.enabled,
-			zstd: this.zstd.enabled,
-		}
+	if (shouldRemove === "keep") {
+		await fs.writeFile(`${file}.${compressor.ext}`, Buffer.from(res.output))
 	}
 }

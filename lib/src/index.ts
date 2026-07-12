@@ -1,3 +1,5 @@
+import type { Dirent } from "node:fs"
+import os from "node:os"
 import path from "node:path"
 import { hrtime } from "node:process"
 import { fileURLToPath } from "node:url"
@@ -5,7 +7,9 @@ import type { BrotliOptions, ZlibOptions, ZstdOptions } from "node:zlib"
 
 import type { AstroIntegration, AstroIntegrationLogger } from "astro"
 
-import { CompressionWorker } from "#/worker.js"
+import type { TaskResponse } from "#/compression-worker.js"
+import { WorkerPool } from "#/worker-pool.js"
+import { compressors, findFiles, queueTask } from "#/worker.js"
 
 export const defaultFileExtensions = new Set([".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"])
 
@@ -37,6 +41,10 @@ export interface Options {
 	zstd?: boolean | ZstdOptions
 	hooks?: {
 		/**
+		 * A hook to allow you to filter out files before the compression even starts
+		 */
+		"compressor:find"?: (ctx: { entry: Dirent; logger: AstroIntegrationLogger }) => boolean
+		/**
 		 * A pre-compression hook to run your own filter over the input files
 		 */
 		"compressor:file:before"?: (ctx: PreCompressionOptions) => HookResult | Promise<HookResult>
@@ -59,6 +67,11 @@ export interface Options {
 	batchSize?: number
 }
 
+// I want a `NestedRequired` >:(
+export type ResolvedOptions = Required<Omit<Options, "batchSize" | "fileExtensions" | "hooks">> & {
+	hooks: Required<NonNullable<Options["hooks"]>>
+}
+
 // https://stackoverflow.com/a/41402498
 const fileSize = (b: number): string => {
 	let res = b
@@ -75,28 +88,26 @@ const fileSize = (b: number): string => {
 	return (u ? res.toFixed(1) : res) + units[u]!
 }
 
-const defaultPreCompressionHook = (
-	extensions: Set<string>,
-	filePath: string,
-	logger: AstroIntegrationLogger,
-	format: Format,
-): HookResult => {
-	if (!extensions.has(path.extname(filePath))) {
-		logger.debug(`skipping ${filePath}`)
-		return "skip"
+const defaultPreCompressionHook = (extensions: Set<string>, entry: Dirent, logger: AstroIntegrationLogger): boolean => {
+	if (!extensions.has(path.extname(entry.name))) {
+		logger.debug(`skipping ${entry.name}`)
+		return false
 	}
 
-	logger.debug(`compressing ${filePath} with ${format}`)
-	return "keep"
+	logger.debug(`keeping ${entry.name}`)
+	return true
 }
 
-const defaultOptions: Required<Omit<Options, "batchSize" | "fileExtensions">> = {
+const defaultOptions: ResolvedOptions = {
 	gzip: true,
 	brotli: true,
 	zstd: true,
 	hooks: {
-		"compressor:file:before": ({ filePath, logger, format }) => {
-			return defaultPreCompressionHook(defaultFileExtensions, filePath, logger, format)
+		"compressor:find": ({ entry, logger }): boolean => {
+			return defaultPreCompressionHook(defaultFileExtensions, entry, logger)
+		},
+		"compressor:file:before": () => {
+			return "keep"
 		},
 		"compressor:file:after": async ({ inputPath, inputSize, outputPath, outputSize, format, logger }) => {
 			if (outputSize >= inputSize) {
@@ -112,7 +123,7 @@ const defaultOptions: Required<Omit<Options, "batchSize" | "fileExtensions">> = 
 
 // oxlint-disable-next-line unicorn/no-anonymous-default-export, import/no-default-export
 export default function (opts: Options): AstroIntegration {
-	const options: Options = { ...defaultOptions, ...opts, hooks: { ...defaultOptions.hooks, ...opts?.hooks } }
+	const options: ResolvedOptions = { ...defaultOptions, ...opts, hooks: { ...defaultOptions.hooks, ...opts?.hooks } }
 
 	return {
 		name: "astro-compressor",
@@ -124,28 +135,55 @@ export default function (opts: Options): AstroIntegration {
 
 				if (opts?.fileExtensions) {
 					logger.warn(`'fileExtensions' were superseded by hooks in astro-compressor@2, and will be removed in v2.1`)
-					if (typeof opts.hooks?.["compressor:file:before"] === "function") {
-						logger.error(`both 'fileExtensions' and 'compressor:file:before' defined, remove 'fileExtensions'`)
+					if (typeof opts.hooks?.["compressor:find"] === "function") {
+						logger.error(`both 'fileExtensions' and 'compressor:find' defined, remove 'fileExtensions'`)
 						throw new Error()
 					}
 
 					const oldstensions = new Set(opts.fileExtensions)
 					options.hooks = {
 						...options.hooks,
-						"compressor:file:before": (params): HookResult => {
-							return defaultPreCompressionHook(oldstensions, params.filePath, params.logger, params.format)
+						"compressor:find": (params): boolean => {
+							return defaultPreCompressionHook(oldstensions, params.entry, params.logger)
 						},
 					}
 					logger.warn(`shimming 'compressor:file:before' hook with 'fileExtensions'`)
 				}
 
+				const { gzip, brotli, zstd } = compressors
+				const enabled = [gzip, brotli, zstd].filter((p) => p.enabled(options))
+				const disabled = [gzip, brotli, zstd].filter((p) => !p.enabled(options))
+
+				if (enabled.length === 0) {
+					logger.warn(`no enabled formats, skipping :(`)
+				} else if (disabled.length === 0) {
+					logger.info(`using ${enabled.map((p) => p.name).join(", ")}`)
+				} else {
+					logger.info(
+						`using ${enabled.map((p) => p.name).join(", ")} (${disabled.map((p) => p.name).join(", ")} disabled)`,
+					)
+				}
+
 				const root = fileURLToPath(dir)
-				const worker = new CompressionWorker(root, logger, options)
+				const pool = new WorkerPool<TaskResponse>()
 
 				try {
 					const start = hrtime.bigint()
-					await worker.gather()
-					await worker.compress()
+					const files = await findFiles(root, logger, options.hooks["compressor:find"])
+
+					const queue = files.flatMap((file) => enabled.map((c) => ({ c, opts: c.options(options), file })))
+
+					let next = 0
+					const consumer = async (): Promise<void> => {
+						while (next < queue.length) {
+							// oxlint-disable-next-line typescript/no-non-null-assertion no-plusplus
+							const { file, c, opts: o } = queue[next++]!
+							// oxlint-disable-next-line no-await-in-loop
+							await queueTask(file, c, o, pool, logger, options.hooks)
+						}
+					}
+
+					await Promise.all(Array.from({ length: Math.min(os.availableParallelism() + 2, queue.length) }, consumer))
 
 					const end = hrtime.bigint()
 					logger.info(`finished in ${(end - start) / BigInt(1000000)}ms\n`)
@@ -154,6 +192,8 @@ export default function (opts: Options): AstroIntegration {
 						logger.error(e.message)
 					}
 					throw e
+				} finally {
+					await pool.close()
 				}
 			},
 		},
