@@ -72,6 +72,8 @@ export class WorkerPool<R> extends EventEmitter {
 		worker.once("online", () => {
 			online = true
 			this.failures = 0
+			this.freeWorkers.push(worker)
+			this.emit(kWorkerFreedEvent)
 		})
 
 		worker.on("error", (err: Error) => {
@@ -90,9 +92,12 @@ export class WorkerPool<R> extends EventEmitter {
 			this.addWorker()
 		})
 
+		worker.on("exit", () => {
+			worker[kTaskInfo]?.done(this.failed ?? new Error("worker exited"), null)
+			worker[kTaskInfo] = null
+		})
+
 		this.workers.push(worker)
-		this.freeWorkers.push(worker)
-		this.emit(kWorkerFreedEvent)
 	}
 
 	async execute<N extends Format>(task: Task<N>): Promise<R>
@@ -106,8 +111,11 @@ export class WorkerPool<R> extends EventEmitter {
 	}
 
 	private removeWorker(worker: PoolWorker<R>): void {
-		this.workers.splice(this.workers.indexOf(worker), 1)
-		this.freeWorkers.splice(this.freeWorkers.indexOf(worker), 1)
+		const workerIndex = this.workers.indexOf(worker)
+		if (workerIndex !== -1) this.workers.splice(workerIndex, 1)
+
+		const freeWorkerIndex = this.freeWorkers.indexOf(worker)
+		if (freeWorkerIndex !== -1) this.freeWorkers.splice(freeWorkerIndex, 1)
 	}
 
 	private fail(err: Error): void {
