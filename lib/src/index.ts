@@ -152,8 +152,8 @@ export default function (opts: Options): AstroIntegration {
 				}
 
 				const { gzip, brotli, zstd } = compressors
-				const enabled = [gzip, brotli, zstd].filter((p) => p.enabled(options))
-				const disabled = [gzip, brotli, zstd].filter((p) => !p.enabled(options))
+				const enabled = [brotli, gzip, zstd].filter((p) => p.enabled(options))
+				const disabled = [brotli, gzip, zstd].filter((p) => !p.enabled(options))
 
 				if (enabled.length === 0) {
 					logger.warn(`no enabled formats, skipping :(`)
