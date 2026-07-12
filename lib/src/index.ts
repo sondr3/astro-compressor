@@ -8,8 +8,9 @@ import type { BrotliOptions, ZlibOptions, ZstdOptions } from "node:zlib"
 import type { AstroIntegration, AstroIntegrationLogger } from "astro"
 
 import type { TaskResponse } from "#/compression-worker.js"
+import { Queue } from "#/queue.js"
 import { WorkerPool } from "#/worker-pool.js"
-import { compressors, findFiles, queueTask } from "#/worker.js"
+import { compressors, findFiles } from "#/worker.js"
 
 export const defaultFileExtensions = new Set([".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"])
 
@@ -167,26 +168,30 @@ export default function (opts: Options): AstroIntegration {
 
 				const root = fileURLToPath(dir)
 				const pool = new WorkerPool<TaskResponse>()
+				const queue = new Queue(pool, logger, options.hooks)
 
 				try {
 					const start = hrtime.bigint()
 					const files = await findFiles(root, logger, options.hooks["compressor:find"])
 
-					const queue = files.flatMap((file) => enabled.map((c) => ({ c, opts: c.options(options), file })))
+					const backlog = files.flatMap((file) => enabled.map((c) => ({ c, opts: c.options(options), file })))
 
 					let next = 0
 					const consumer = async (): Promise<void> => {
-						while (next < queue.length) {
+						while (next < backlog.length) {
 							// oxlint-disable-next-line typescript/no-non-null-assertion no-plusplus
-							const { file, c, opts: o } = queue[next++]!
+							const { file, c, opts: o } = backlog[next++]!
 							// oxlint-disable-next-line no-await-in-loop
-							await queueTask(file, c, o, pool, logger, options.hooks)
+							await queue.processFile(file, c, o)
 						}
 					}
 
-					await Promise.all(Array.from({ length: Math.min(os.availableParallelism() + 2, queue.length) }, consumer))
+					await Promise.all(Array.from({ length: Math.min(os.availableParallelism() + 2, backlog.length) }, consumer))
 
 					const end = hrtime.bigint()
+					for (const compressor of enabled) {
+						logger.info(`${compressor.name.padEnd(8, " ")} compressed ${queue.counter[compressor.name]} files`)
+					}
 					logger.info(`finished in ${(end - start) / BigInt(1000000)}ms\n`)
 				} catch (e) {
 					if (e instanceof Error) {
