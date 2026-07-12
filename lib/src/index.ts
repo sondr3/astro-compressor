@@ -147,7 +147,7 @@ export default function (opts: Options): AstroIntegration {
 							return defaultPreCompressionHook(oldstensions, params.entry, params.logger)
 						},
 					}
-					logger.warn(`shimming 'compressor:file:before' hook with 'fileExtensions'`)
+					logger.warn(`shimming 'compressor:find' hook with 'fileExtensions'`)
 				}
 
 				const { gzip, brotli, zstd } = compressors
@@ -156,6 +156,7 @@ export default function (opts: Options): AstroIntegration {
 
 				if (enabled.length === 0) {
 					logger.warn(`no enabled formats, skipping :(`)
+					return
 				} else if (disabled.length === 0) {
 					logger.info(`using ${enabled.map((p) => p.name).join(", ")}`)
 				} else {
