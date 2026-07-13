@@ -4,13 +4,13 @@ import path from "node:path"
 import type { AstroIntegrationLogger } from "astro"
 
 import { BrotliCompressor, Compressor, GzipCompressor, ZstdCompressor } from "#/compressor.js"
-import type { Format } from "#/index.js"
+import type { Format, Options } from "#/index.js"
 
-export const compressors: { [K in Format]: Compressor<K> } = {
-	brotli: new BrotliCompressor(),
-	gzip: new GzipCompressor(),
-	zstd: new ZstdCompressor(),
-}
+export const compressors = (options: Options): { [K in Format]: Compressor<K> } => ({
+	brotli: new BrotliCompressor(options),
+	gzip: new GzipCompressor(options),
+	zstd: new ZstdCompressor(options),
+})
 
 export const findFiles = async (
 	root: string,

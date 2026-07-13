@@ -1,6 +1,7 @@
 import type { BrotliOptions, ZlibOptions, ZstdOptions } from "node:zlib"
 import zlib from "node:zlib"
 
+import type { Task } from "#/compression-worker.js"
 import type { Format, Options } from "#/index.js"
 
 export type OptionsMap = { gzip: ZlibOptions; brotli: BrotliOptions; zstd: ZstdOptions }
@@ -9,21 +10,31 @@ export abstract class Compressor<N extends Format> {
 	abstract readonly name: N
 	abstract readonly ext: string
 
+	readonly opts: OptionsMap[N]
+
 	protected abstract isEnabled(options: Options[N]): boolean
 	protected abstract mergeOptions(options: Options[N]): OptionsMap[N]
+
+	constructor(options: Options[N]) {
+		this.opts = this.mergeOptions(options)
+	}
 
 	enabled(options: Options): boolean {
 		return this.isEnabled(options[this.name])
 	}
 
-	options(options: Options): OptionsMap[N] {
-		return this.mergeOptions(options[this.name])
+	task(file: string, source: ArrayBuffer): Task<N> {
+		return { file, source, format: this.name, options: this.opts }
 	}
 }
 
 export class GzipCompressor extends Compressor<"gzip"> {
 	readonly name = "gzip"
 	readonly ext: string = "gz"
+
+	constructor(options: Options) {
+		super(options.gzip)
+	}
 
 	override isEnabled(options: Options["gzip"]): boolean {
 		return options !== null && options !== false
@@ -39,6 +50,10 @@ export class GzipCompressor extends Compressor<"gzip"> {
 export class BrotliCompressor extends Compressor<"brotli"> {
 	readonly name = "brotli"
 	readonly ext: string = "br"
+
+	constructor(options: Options) {
+		super(options.brotli)
+	}
 
 	override isEnabled(options: Options["brotli"]): boolean {
 		return options !== null && options !== false
@@ -58,6 +73,10 @@ export class BrotliCompressor extends Compressor<"brotli"> {
 export class ZstdCompressor extends Compressor<"zstd"> {
 	readonly name = "zstd"
 	readonly ext: string = "zst"
+
+	constructor(options: Options) {
+		super(options.zstd)
+	}
 
 	override isEnabled(options: Options["zstd"]): boolean {
 		return typeof zlib.createZstdCompress === "function" && options !== null && options !== false
