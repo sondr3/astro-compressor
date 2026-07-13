@@ -34,7 +34,7 @@ export class Queue {
 			if (typeof hook === "function") {
 				// oxlint-disable-next-line no-await-in-loop
 				const shouldCompress = await hook({ filePath: file, logger: this.logger, format: compressor.name })
-				if (shouldCompress === "skip") return
+				if (shouldCompress === "skip") continue
 			}
 
 			this.counter[compressor.name] += 1
