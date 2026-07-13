@@ -151,7 +151,7 @@ export default function (opts: Options): AstroIntegration {
 					logger.warn(`shimming 'compressor:find' hook with 'fileExtensions'`)
 				}
 
-				const { gzip, brotli, zstd } = compressors
+				const { gzip, brotli, zstd } = compressors(options)
 				const enabled = [brotli, gzip, zstd].filter((p) => p.enabled(options))
 				const disabled = [brotli, gzip, zstd].filter((p) => !p.enabled(options))
 
@@ -168,25 +168,23 @@ export default function (opts: Options): AstroIntegration {
 
 				const root = fileURLToPath(dir)
 				const pool = new WorkerPool<TaskResponse>()
-				const queue = new Queue(pool, logger, options.hooks)
+				const queue = new Queue(pool, enabled, logger, options.hooks)
 
 				try {
 					const start = hrtime.bigint()
 					const files = await findFiles(root, logger, options.hooks["compressor:find"])
 
-					const backlog = files.flatMap((file) => enabled.map((c) => ({ c, opts: c.options(options), file })))
-
 					let next = 0
 					const consumer = async (): Promise<void> => {
-						while (next < backlog.length) {
-							// oxlint-disable-next-line typescript/no-non-null-assertion no-plusplus
-							const { file, c, opts: o } = backlog[next++]!
+						while (next < files.length) {
+							// oxlint-disable-next-line no-plusplus typescript/no-non-null-assertion
+							const file = files[next++]!
 							// oxlint-disable-next-line no-await-in-loop
-							await queue.processFile(file, c, o)
+							await queue.processFile(file)
 						}
 					}
 
-					await Promise.all(Array.from({ length: Math.min(os.availableParallelism() + 2, backlog.length) }, consumer))
+					await Promise.all(Array.from({ length: Math.min(os.availableParallelism() + 2, files.length) }, consumer))
 
 					const end = hrtime.bigint()
 					for (const compressor of enabled) {
