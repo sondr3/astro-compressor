@@ -8,10 +8,6 @@ type BaseTask = { file: string; source: ArrayBuffer }
 export type Task<N extends Format = Format> = {
 	[K in N]: BaseTask & { format: K; options: OptionsMap[K] }
 }[N]
-// export type Task =
-// 	| (BaseTask & { format: "gzip"; options: zlib.ZlibOptions })
-// 	| (BaseTask & { format: "brotli"; options: zlib.BrotliOptions })
-// 	| (BaseTask & { format: "zstd"; options: zlib.ZstdOptions })
 
 export interface TaskResponse {
 	file: string
@@ -23,7 +19,7 @@ const assertNever = (): never => {
 	throw new Error()
 }
 
-const compress = ({ options, format, source }: Task): NonSharedBuffer => {
+const compress = ({ options, format, source }: Task): Buffer => {
 	switch (format) {
 		case "gzip":
 			return zlib.gzipSync(source, options)

@@ -18,9 +18,7 @@ export const findFiles = async (
 	filter: (ctx: { entry: Dirent; logger: AstroIntegrationLogger }) => boolean,
 ): Promise<Array<string>> => {
 	const entries = await fs.readdir(root, { withFileTypes: true, recursive: true })
-	const files = entries
-		.filter((p) => p.isFile() && filter({ entry: p, logger }))
-		.map((p) => path.join(p.parentPath, p.name))
+	const files = entries.filter((p) => filter({ entry: p, logger })).map((p) => path.join(p.parentPath, p.name))
 	const stats = await Promise.all(files.map(async (file) => ({ file, size: (await fs.stat(file)).size })))
 	return stats.toSorted((a, b) => b.size - a.size).map(({ file }) => file)
 }
