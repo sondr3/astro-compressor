@@ -2,8 +2,9 @@ import type { BrotliOptions, ZlibOptions, ZstdOptions } from "node:zlib"
 import zlib from "node:zlib"
 
 import type { Task } from "#/compression-worker.js"
-import type { Format, Options } from "#/index.js"
+import type { Options } from "#/index.js"
 
+export type Format = "gzip" | "brotli" | "zstd"
 export type OptionsMap = { gzip: ZlibOptions; brotli: BrotliOptions; zstd: ZstdOptions }
 
 export abstract class Compressor<N extends Format> {
@@ -95,3 +96,9 @@ export class ZstdCompressor extends Compressor<"zstd"> {
 		return { ...defaults, ...opts, params: { ...defaults.params, ...opts.params } }
 	}
 }
+
+export const compressors = (options: Options): { [K in Format]: Compressor<K> } => ({
+	brotli: new BrotliCompressor(options),
+	gzip: new GzipCompressor(options),
+	zstd: new ZstdCompressor(options),
+})
