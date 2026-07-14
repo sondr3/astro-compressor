@@ -3,42 +3,42 @@ import EventEmitter from "node:events"
 import os from "node:os"
 import { Worker } from "node:worker_threads"
 
-import type { Task } from "#/compression-worker.js"
-import type { Format } from "#/index.js"
+import type { CompressionResult, Task } from "#/compression-worker.js"
+import type { Format } from "#/compressor.js"
 
 const kTaskInfo = Symbol("kTaskInfo")
 const kWorkerFreedEvent = Symbol("kWorkerFreedEvent")
 
-type WorkerCallback<R> = (...args: [err: Error, result: null] | [err: null, result: R]) => void
+type WorkerCallback = (...args: [err: Error, result: null] | [err: null, result: CompressionResult]) => void
 
-interface QueuedTask<R> {
+interface QueuedTask {
 	task: Task
-	callback: WorkerCallback<R>
+	callback: WorkerCallback
 }
 
-type PoolWorker<R> = Worker & {
-	[kTaskInfo]?: WorkerPoolTaskInfo<R> | null
+type PoolWorker = Worker & {
+	[kTaskInfo]?: WorkerPoolTaskInfo | null
 }
 
-class WorkerPoolTaskInfo<R> extends AsyncResource {
-	private readonly callback: WorkerCallback<R>
+class WorkerPoolTaskInfo extends AsyncResource {
+	private readonly callback: WorkerCallback
 
-	constructor(callback: WorkerCallback<R>) {
+	constructor(callback: WorkerCallback) {
 		super("WorkerPoolTaskInfo")
 		this.callback = callback
 	}
 
-	done(err?: Error | null, result?: R | null): void {
+	done(err?: Error | null, result?: CompressionResult | null): void {
 		this.runInAsyncScope(this.callback, null, err, result)
 		this.emitDestroy()
 	}
 }
 
-export class WorkerPool<R> extends EventEmitter {
+export class WorkerPool extends EventEmitter {
 	protected threads: number
-	protected workers: Array<PoolWorker<R>> = []
-	protected freeWorkers: Array<PoolWorker<R>> = []
-	protected tasks: Array<QueuedTask<R>> = []
+	protected workers: Array<PoolWorker> = []
+	protected freeWorkers: Array<PoolWorker> = []
+	protected tasks: Array<QueuedTask> = []
 	protected failures: number = 0
 	protected failed: Error | null = null
 
@@ -59,10 +59,10 @@ export class WorkerPool<R> extends EventEmitter {
 	}
 
 	addWorker(): void {
-		const worker: PoolWorker<R> = new Worker(new URL("compression-worker.js", import.meta.url))
+		const worker: PoolWorker = new Worker(new URL("compression-worker.js", import.meta.url))
 		let online = false
 
-		worker.on("message", (res: R) => {
+		worker.on("message", (res: CompressionResult) => {
 			worker[kTaskInfo]?.done(null, res)
 			worker[kTaskInfo] = null
 			this.freeWorkers.push(worker)
@@ -100,8 +100,8 @@ export class WorkerPool<R> extends EventEmitter {
 		this.workers.push(worker)
 	}
 
-	async execute<N extends Format>(task: Task<N>): Promise<R>
-	async execute(task: Task): Promise<R> {
+	async execute<N extends Format>(task: Task<N>): Promise<CompressionResult>
+	async execute(task: Task): Promise<CompressionResult> {
 		return new Promise((resolve, reject) => {
 			this.runTask(task, (err, result) => {
 				if (err) reject(err)
@@ -110,7 +110,7 @@ export class WorkerPool<R> extends EventEmitter {
 		})
 	}
 
-	private removeWorker(worker: PoolWorker<R>): void {
+	private removeWorker(worker: PoolWorker): void {
 		const workerIndex = this.workers.indexOf(worker)
 		if (workerIndex !== -1) this.workers.splice(workerIndex, 1)
 
@@ -125,7 +125,7 @@ export class WorkerPool<R> extends EventEmitter {
 		void this.close()
 	}
 
-	private runTask(task: Task, callback: WorkerCallback<R>): void {
+	private runTask(task: Task, callback: WorkerCallback): void {
 		if (this.failed) return callback(this.failed, null)
 
 		const worker = this.freeWorkers.pop()
