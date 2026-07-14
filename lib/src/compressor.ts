@@ -15,7 +15,7 @@ export abstract class Compressor<N extends Format> {
 	protected abstract isEnabled(options: Options[N]): boolean
 	protected abstract mergeOptions(options: Options[N]): OptionsMap[N]
 
-	constructor(options: Options[N]) {
+	protected constructor(options: Options[N]) {
 		this.opts = this.mergeOptions(options)
 	}
 
@@ -23,8 +23,8 @@ export abstract class Compressor<N extends Format> {
 		return this.isEnabled(options[this.name])
 	}
 
-	task(file: string, source: ArrayBuffer): Task<N> {
-		return { file, source, format: this.name, options: this.opts }
+	task(file: string, source: ArrayBuffer, options: OptionsMap[N]): Task<N> {
+		return { file, source, format: this.name, options }
 	}
 }
 

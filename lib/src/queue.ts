@@ -3,7 +3,7 @@ import { promises as fs } from "node:fs"
 import type { AstroIntegrationLogger } from "astro"
 
 import type { TaskResponse } from "#/compression-worker.js"
-import type { Compressor } from "#/compressor.js"
+import type { Compressor, OptionsMap } from "#/compressor.js"
 import type { Format, Options } from "#/index.js"
 import type { WorkerPool } from "#/worker-pool.js"
 
@@ -29,11 +29,11 @@ export class Queue {
 
 	async processFile(file: string): Promise<void> {
 		const runners: Array<Compressor<Format>> = []
-		const hook = this.hooks?.["compressor:file:before"]
+		const hook = this.hooks?.preCompression
 		for (const compressor of this.compressors) {
 			if (typeof hook === "function") {
 				// oxlint-disable-next-line no-await-in-loop
-				const shouldCompress = await hook({ filePath: file, logger: this.logger, format: compressor.name })
+				const shouldCompress = (await hook({ filePath: file, logger: this.logger, format: compressor.name })) ?? "keep"
 				if (shouldCompress === "skip") continue
 			}
 
@@ -48,18 +48,19 @@ export class Queue {
 		await Promise.all(
 			runners.map(async (compressor, i) => {
 				const buf = i === runners.length - 1 ? source.buffer : source.buffer.slice(0)
-				const res = await this.pool.execute(compressor.task(file, buf))
+				const opts = await this.fileOptions(compressor, file)
+				const res = await this.pool.execute(compressor.task(file, buf, opts))
 
 				const shouldRemove =
-					typeof this.hooks?.["compressor:file:after"] === "function"
-						? await this.hooks?.["compressor:file:after"]({
+					typeof this.hooks?.postCompression === "function"
+						? ((await this.hooks.postCompression({
 								inputPath: file,
 								inputSize,
 								outputPath: `${file}.${compressor.ext}`,
 								outputSize: res.output.byteLength,
 								format: compressor.name,
 								logger: this.logger,
-							})
+							})) ?? "keep")
 						: "keep"
 
 				if (shouldRemove === "keep") {
@@ -69,5 +70,13 @@ export class Queue {
 				}
 			}),
 		)
+	}
+
+	private async fileOptions<N extends Format>(compressor: Compressor<N>, file: string): Promise<OptionsMap[N]> {
+		const hook = this.hooks?.fileOptions
+		if (typeof hook !== "function") return compressor.opts
+
+		const opts = await hook({ filePath: file, logger: this.logger, format: compressor.name })
+		return opts ?? compressor.opts
 	}
 }
