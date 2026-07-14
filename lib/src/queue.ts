@@ -72,7 +72,7 @@ export class Queue {
 	}
 
 	private async fileOptions<N extends Format>(compressor: Compressor<N>, file: string): Promise<OptionsMap[N]> {
-		const hook = this.hooks?.fileOptions
+		const hook = this.hooks?.fileOptions?.[compressor.name]
 		if (typeof hook !== "function") return compressor.opts
 
 		const opts = await hook({ filePath: file, logger: this.logger, format: compressor.name })

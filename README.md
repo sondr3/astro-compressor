@@ -179,6 +179,9 @@ You may want to even override options on a file-by-file basis per format, which 
 hooks gives you the option to. By default, it is `undefined` and falls back to either
 the default options or your globally set options.
 
+Note that this hook is a bit awkward and slow as it'll run once per file per format, so
+it should only be used if you need and want full control of compression per file per format.
+
 ```ts
 import { defineConfig } from "astro/config"
 import compressor from "astro-compressor"
@@ -190,10 +193,12 @@ export default defineConfig({
 		// ...,
 		compressor({
 			hooks: {
-				fileOptions: ({ filePath, format, logger }) => {
-					if (format === "gzip" && filePath.endsWith(".txt")) {
-						return { level: zlib.constants.Z_DEFAULT_COMPRESSION }
-					}
+				fileOptions: {
+					gzip: ({ filePath, logger }) => {
+						if (format === "gzip" && filePath.endsWith(".txt")) {
+							return { level: zlib.constants.Z_DEFAULT_COMPRESSION }
+						}
+					},
 				},
 			},
 		}),
