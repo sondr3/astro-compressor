@@ -7,7 +7,8 @@ import type { Format, OptionsMap } from "#/compressor.js"
 import type { ResolvedOptions } from "#/index.js"
 import { fileSize } from "#/utils.js"
 
-export type HookResult = "keep" | "skip"
+export type KeepOrSkip = "keep" | "skip"
+export type HookResult = KeepOrSkip | Promise<KeepOrSkip | undefined> | undefined
 
 export const defaultFileExtensions = new Set([".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"])
 
@@ -21,19 +22,20 @@ export const defaultFileFilter = (extensions: Set<string>, entry: Dirent, logger
 	return true
 }
 
-export interface PreCompressionOptions {
+export interface PreCompressionParams {
 	filePath: string
 	format: Format
 	logger: AstroIntegrationLogger
 }
 
-export interface FileOptionsProps<N extends Format> {
+export type FileOptionsResult<N extends Format> = OptionsMap[N] | Promise<OptionsMap[N] | undefined> | undefined
+export interface FileOptionsParams<N extends Format> {
 	filePath: string
 	format: N
 	logger: AstroIntegrationLogger
 }
 
-export interface PostCompressionOptions {
+export interface PostCompressionParams {
 	inputPath: string
 	inputSize: number
 	outputPath: string
@@ -42,30 +44,48 @@ export interface PostCompressionOptions {
 	logger: AstroIntegrationLogger
 }
 
-export interface FileFilter {
+export interface FileFilterParams {
 	entry: Dirent
 	logger: AstroIntegrationLogger
 }
 
 export interface Hooks {
 	/**
-	 * A hook to allow you to filter out files before the compression even starts
+	 * This hook allows you to customize what files are included in the compression. By
+	 * default, it uses the 'defaultFileFilter' function with 'defaultFileExtensions' as the
+	 * filter.
+	 *
+	 * Remember to run `entry.isFile()` to avoid including directories.
 	 */
-	fileFilter?: (ctx: FileFilter) => boolean
+	fileFilter?: (ctx: FileFilterParams) => boolean
 	/**
-	 * A pre-compression hook to run your own filter over the input files
+	 * A pre-compression hook that allows you to change your mind about compressing
+	 * a specific file in a specific format. In other words, you can include all SVGs via
+	 * the `fileFilter` hook but skip compressing them with `brotli` for example. Or
+	 * can be used to trace what files are compressed using the supplied `logger` instance.
+	 *
+	 * Returning `undefined` means the file is kept.
 	 */
-	preCompression?: (ctx: PreCompressionOptions) => HookResult | Promise<HookResult | undefined> | undefined
+	preCompression?: (ctx: PreCompressionParams) => HookResult
 	/**
-	 * A hook to override options on a per-file basis
+	 * A pre-compression hook that allows you to customize the options on a per file
+	 * and per format basis. As with the `preCompression` hook you could for example
+	 * use less aggressive options for certain files to avoid spending time on them.
+	 *
+	 * Returning `undefined` falls back to the default options or your own configuration.
 	 */
-	fileOptions?: <N extends Format>(
-		ctx: FileOptionsProps<N>,
-	) => OptionsMap[N] | Promise<OptionsMap[N] | undefined> | undefined
+	fileOptions?: <N extends Format>(ctx: FileOptionsParams<N>) => FileOptionsResult<N>
 	/**
-	 * A post-compression hook to run your own filter over the output files
+	 * A post-compression hook that allows you to do a final decision on whether to
+	 * save a compressed file. If you only want to save file that are compressed above
+	 * a certain threshold this can be useful.
+	 *
+	 * The default implementation is `if (outputSize >= inputSize) "skip"`, so compressed files
+	 * that are larger than their input is skipped
+	 *
+	 * Returning `undefined` means the file is kept.
 	 */
-	postCompression?: (ctx: PostCompressionOptions) => HookResult | Promise<HookResult | undefined> | undefined
+	postCompression?: (ctx: PostCompressionParams) => HookResult
 }
 
 export const defaultHooks: ResolvedOptions["hooks"] = {

@@ -29,6 +29,7 @@ export abstract class Compressor<N extends Format> {
 	}
 }
 
+export const gzipDefaults: ZlibOptions = { level: zlib.constants.Z_BEST_COMPRESSION }
 export class GzipCompressor extends Compressor<"gzip"> {
 	readonly name = "gzip"
 	readonly ext: string = "gz"
@@ -42,12 +43,16 @@ export class GzipCompressor extends Compressor<"gzip"> {
 	}
 
 	override mergeOptions(options: Options["gzip"]): ZlibOptions {
-		const defaults: ZlibOptions = { level: zlib.constants.Z_BEST_COMPRESSION }
 		const opts = typeof options === "object" ? options : {}
-		return { ...defaults, ...opts }
+		return { ...gzipDefaults, ...opts }
 	}
 }
 
+export const brotliDefaults: BrotliOptions = {
+	params: {
+		[zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY,
+	},
+}
 export class BrotliCompressor extends Compressor<"brotli"> {
 	readonly name = "brotli"
 	readonly ext: string = "br"
@@ -61,16 +66,19 @@ export class BrotliCompressor extends Compressor<"brotli"> {
 	}
 
 	override mergeOptions(options: Options["brotli"]): BrotliOptions {
-		const defaults: BrotliOptions = {
-			params: {
-				[zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY,
-			},
-		}
 		const opts = typeof options === "object" ? options : {}
-		return { ...defaults, ...opts, params: { ...defaults.params, ...opts.params } }
+		return { ...brotliDefaults, ...opts, params: { ...brotliDefaults.params, ...opts.params } }
 	}
 }
 
+export const zstdDefaults: ZstdOptions = {
+	params: {
+		// 19 is the highest standard zstd level. Levels 20-22 exist, but they're "ultra"
+		// levels that require significantly more memory for both compression
+		// and decompression.
+		[zlib.constants.ZSTD_c_compressionLevel]: 19,
+	},
+}
 export class ZstdCompressor extends Compressor<"zstd"> {
 	readonly name = "zstd"
 	readonly ext: string = "zst"
@@ -84,16 +92,8 @@ export class ZstdCompressor extends Compressor<"zstd"> {
 	}
 
 	override mergeOptions(options: Options["zstd"]): ZstdOptions {
-		const defaults: ZstdOptions = {
-			params: {
-				// 19 is the highest standard zstd level. Levels 20-22 exist, but they're "ultra"
-				// levels that require significantly more memory for both compression
-				// and decompression.
-				[zlib.constants.ZSTD_c_compressionLevel]: 19,
-			},
-		}
 		const opts = typeof options === "object" ? options : {}
-		return { ...defaults, ...opts, params: { ...defaults.params, ...opts.params } }
+		return { ...zstdDefaults, ...opts, params: { ...zstdDefaults.params, ...opts.params } }
 	}
 }
 
