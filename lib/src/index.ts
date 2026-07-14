@@ -8,6 +8,7 @@ import type { BrotliOptions, ZlibOptions, ZstdOptions } from "node:zlib"
 import type { AstroIntegration, AstroIntegrationLogger } from "astro"
 
 import type { TaskResponse } from "#/compression-worker.js"
+import type { OptionsMap } from "#/compressor.js"
 import { Queue } from "#/queue.js"
 import { WorkerPool } from "#/worker-pool.js"
 import { compressors, findFiles } from "#/worker.js"
@@ -21,6 +22,12 @@ export type HookResult = "keep" | "skip"
 export interface PreCompressionOptions {
 	filePath: string
 	format: Format
+	logger: AstroIntegrationLogger
+}
+
+export interface FileOptionsProps<N extends Format> {
+	filePath: string
+	format: N
 	logger: AstroIntegrationLogger
 }
 
@@ -44,15 +51,21 @@ export interface Options {
 		/**
 		 * A hook to allow you to filter out files before the compression even starts
 		 */
-		"compressor:find"?: (ctx: { entry: Dirent; logger: AstroIntegrationLogger }) => boolean
+		fileFilter?: (ctx: { entry: Dirent; logger: AstroIntegrationLogger }) => boolean
 		/**
 		 * A pre-compression hook to run your own filter over the input files
 		 */
-		"compressor:file:before"?: (ctx: PreCompressionOptions) => HookResult | Promise<HookResult>
+		preCompression?: (ctx: PreCompressionOptions) => HookResult | Promise<HookResult | undefined> | undefined
+		/**
+		 * A hook to override options on a per-file basis
+		 */
+		fileOptions?: <N extends Format>(
+			ctx: FileOptionsProps<N>,
+		) => OptionsMap[N] | Promise<OptionsMap[N] | undefined> | undefined
 		/**
 		 * A post-compression hook to run your own filter over the output files
 		 */
-		"compressor:file:after"?: (ctx: PostCompressionOptions) => HookResult | Promise<HookResult>
+		postCompression?: (ctx: PostCompressionOptions) => HookResult | Promise<HookResult | undefined> | undefined
 	}
 	/**
 	 * Extensions to compress, must be in the format `.html`, `.css` etc
@@ -70,7 +83,7 @@ export interface Options {
 
 // I want a `NestedRequired` >:(
 export type ResolvedOptions = Required<Omit<Options, "batchSize" | "fileExtensions" | "hooks">> & {
-	hooks: Required<NonNullable<Options["hooks"]>>
+	hooks: Required<Omit<NonNullable<Options["hooks"]>, "fileOptions" | "preCompression">>
 }
 
 // https://stackoverflow.com/a/41402498
@@ -89,7 +102,7 @@ const fileSize = (b: number): string => {
 	return (u ? res.toFixed(1) : res) + units[u]!
 }
 
-const defaultPreCompressionHook = (extensions: Set<string>, entry: Dirent, logger: AstroIntegrationLogger): boolean => {
+const defaultFileFilter = (extensions: Set<string>, entry: Dirent, logger: AstroIntegrationLogger): boolean => {
 	if (!extensions.has(path.extname(entry.name))) {
 		logger.debug(`skipping ${entry.name}`)
 		return false
@@ -104,13 +117,10 @@ const defaultOptions: ResolvedOptions = {
 	brotli: true,
 	zstd: true,
 	hooks: {
-		"compressor:find": ({ entry, logger }): boolean => {
-			return defaultPreCompressionHook(defaultFileExtensions, entry, logger)
+		fileFilter: ({ entry, logger }): boolean => {
+			return entry.isFile() && defaultFileFilter(defaultFileExtensions, entry, logger)
 		},
-		"compressor:file:before": () => {
-			return "keep"
-		},
-		"compressor:file:after": async ({ inputPath, inputSize, outputPath, outputSize, format, logger }) => {
+		postCompression: async ({ inputPath, inputSize, outputPath, outputSize, format, logger }) => {
 			if (outputSize >= inputSize) {
 				logger.debug(`${outputPath} output size is larger than its input: ${outputSize} >= ${inputSize}`)
 				return "skip"
@@ -136,19 +146,19 @@ export default function (opts: Options): AstroIntegration {
 
 				if (opts?.fileExtensions) {
 					logger.warn(`'fileExtensions' were superseded by hooks in astro-compressor@2, and will be removed in v2.1`)
-					if (typeof opts.hooks?.["compressor:find"] === "function") {
-						logger.error(`both 'fileExtensions' and 'compressor:find' defined, remove 'fileExtensions'`)
+					if (typeof opts.hooks?.fileFilter === "function") {
+						logger.error(`both 'fileExtensions' and 'fileFilter' defined, remove 'fileExtensions'`)
 						throw new Error()
 					}
 
 					const oldstensions = new Set(opts.fileExtensions)
 					options.hooks = {
 						...options.hooks,
-						"compressor:find": (params): boolean => {
-							return defaultPreCompressionHook(oldstensions, params.entry, params.logger)
+						fileFilter: (params): boolean => {
+							return defaultFileFilter(oldstensions, params.entry, params.logger)
 						},
 					}
-					logger.warn(`shimming 'compressor:find' hook with 'fileExtensions'`)
+					logger.warn(`shimming 'fileFilter' hook with 'fileExtensions'`)
 				}
 
 				const { gzip, brotli, zstd } = compressors(options)
@@ -172,7 +182,7 @@ export default function (opts: Options): AstroIntegration {
 
 				try {
 					const start = hrtime.bigint()
-					const files = await findFiles(root, logger, options.hooks["compressor:find"])
+					const files = await findFiles(root, logger, options.hooks.fileFilter)
 
 					let next = 0
 					const consumer = async (): Promise<void> => {
