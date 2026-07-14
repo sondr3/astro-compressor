@@ -195,7 +195,7 @@ export default defineConfig({
 			hooks: {
 				fileOptions: {
 					gzip: ({ filePath, logger }) => {
-						if (format === "gzip" && filePath.endsWith(".txt")) {
+						if (filePath.endsWith(".txt")) {
 							return { level: zlib.constants.Z_DEFAULT_COMPRESSION }
 						}
 					},
