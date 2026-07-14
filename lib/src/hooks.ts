@@ -29,9 +29,8 @@ export interface PreCompressionParams {
 }
 
 export type FileOptionsResult<N extends Format> = OptionsMap[N] | Promise<OptionsMap[N] | undefined> | undefined
-export interface FileOptionsParams<N extends Format> {
+export interface FileOptionsParams {
 	filePath: string
-	format: N
 	logger: AstroIntegrationLogger
 }
 
@@ -72,9 +71,14 @@ export interface Hooks {
 	 * and per format basis. As with the `preCompression` hook you could for example
 	 * use less aggressive options for certain files to avoid spending time on them.
 	 *
+	 * This hooks is a little awkward and will reduce the performance a bit, but gives
+	 * you full control.
+	 *
 	 * Returning `undefined` falls back to the default options or your own configuration.
 	 */
-	fileOptions?: <N extends Format>(ctx: FileOptionsParams<N>) => FileOptionsResult<N>
+	fileOptions?: {
+		[K in Format]?: (ctx: FileOptionsParams) => FileOptionsResult<K>
+	}
 	/**
 	 * A post-compression hook that allows you to do a final decision on whether to
 	 * save a compressed file. If you only want to save file that are compressed above
