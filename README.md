@@ -8,10 +8,12 @@
     <b>A gzip, brotli and zstd compressor for Astro</b>
 </p>
 
-- **Simple**: Set it and forget it
-- **Optimal**: By compressing ahead of time, a more performant compression can be performed
-- **Configurable**: Allows full configuration for those that require it
 - **All the compression**: `brotli`, `zstd`, `gzip`, oh my
+- **Simple**: Set it and forget it
+- **Configurable**: Allows full configuration for those that require it
+- **Performant**: Using worker threads, thousands of static assets are compressed in less than a second
+- **Optimal**: By compressing ahead of time, fewer cycles are wasted compressing the same files again and again
+- **Hooks**: Allows you to hook into the compression loop for _full_ customizability
 
 <details>
 <summary>Table of Contents</summary>
@@ -50,10 +52,10 @@ To compress your files, simply run `pnpm build` and look for the compression mes
 
 # Usage
 
-First, install the package with your favorite package manager: `pnpm add --dev astro-compressor`,
-then configure it in your `astro.config.*` file in the `integrations` property:
+First, install the package with your favorite package manager: `pnpm add astro-compressor`, then
+configure it in your `astro.config.*` file in the `integrations` property:
 
-```js
+```ts
 import { defineConfig } from "astro/config";
 import compressor from "astro-compressor";
 
@@ -63,55 +65,170 @@ export default defineConfig({
 });
 ```
 
+By default `gzip`, `brotli` and `zstd` are enabled with options for optimal compression
+and performance.
+
 ## Configuration
 
 ### Enabling
 
-You can also optionally enable and/or disable either the gzip or brotli compression by
+You can enable and/or disable the compression algorithms compression by
 passing an options object to the compressor:
 
-```js
-import { defineConfig } from "astro/config";
-import compressor from "astro-compressor";
+```ts
+import { defineConfig } from "astro/config"
+import compressor from "astro-compressor"
 
 export default defineConfig({
-  // ...
-  integrations: [..., compressor({ gzip: true, brotli: false })],
-});
+	// ...
+	integrations: [
+		// ...
+		compressor({ gzip: true, brotli: false }),
+	],
+})
 ```
 
 ### Advanced settings
 
 If the default settings are not to your liking you can also configure the various
-options for each compressor directly instead:
+options for each compressor directly instead, these are merged with the default options
+when resoling the full options object. You can also import the defaults and customize
+the options further:
 
-```js
-import { defineConfig } from "astro/config";
-import compressor from "astro-compressor";
-
-export default defineConfig({
-  // ...
-  integrations: [..., compressor({ gzip: { level: 6 }, brotli: { chunkSize: 16 * 512 } })],
-});
-```
-
-### File handling
-
-Or customize the file formats that will be compressed:
-
-```js
-import { defineConfig } from "astro/config";
-import compressor from "astro-compressor";
+```ts
+import { defineConfig } from "astro/config"
+import compressor, { gzipDefaults } from "astro-compressor"
 
 export default defineConfig({
-  // ...
-  integrations: [..., compressor({
-    fileExtensions: [".html"] // only compress HTML files
-  })],
-});
+	// ...
+	integrations: [
+		// ....
+		compressor({
+			gzip: { level: 6, ...gzipDefaults },
+			brotli: { chunkSize: 16 * 512 },
+		}),
+	],
+})
 ```
 
-By default, the `fileExtensions` array is `[".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"]`.
+### Hooks (_new in v2_)
+
+For full control over what gets compressed with specific formats and options, you can
+also hook into various hooks to control _everything_. Using a TypeScript config is
+highly recommended if you want to use these due to the types.
+
+#### `fileFilter`
+
+This hook allows you to override which files are filtered out for further compression
+by filtering on things like the directory it's in or its extension and so on.
+
+```ts
+import { defineConfig } from "astro/config"
+import compressor from "astro-compressor"
+
+export default defineConfig({
+	// ...
+	integrations: [
+		// ...,
+		compressor({
+			hooks: {
+				fileFilter: ({ entry, logger }): boolean => {
+					return entry.isFile() && entry.name === "foo.html"
+				},
+			},
+		}),
+	],
+})
+```
+
+By default, this uses the exported `defaultFileFilter` function which uses the `defaultFileExtensions` array
+to filter files by their extensions.
+
+#### `preCompression`
+
+Even if you kept a file from the `fileFilter` hook you may not want to compress it with
+a certain algorithm. This allows you to filter out files on a per-format basis. By default,
+it is undefined and all files are included.
+
+```ts
+import { defineConfig } from "astro/config"
+import compressor, { type HookResult } from "astro-compressor"
+
+export default defineConfig({
+	// ...
+	integrations: [
+		// ...,
+		compressor({
+			hooks: {
+				preCompression: ({ filePath, format, logger }): HookResult => {
+					if (format === "gzip" && filePath.includes("_skip")) {
+						return "skip"
+					}
+				},
+			},
+		}),
+	],
+})
+```
+
+This can also be used to debug issues with compressing.
+
+#### `fileOptions`
+
+You may want to even override options on a file-by-file basis per format, which this
+hooks gives you the option to. By default, it is `undefined` and falls back to either
+the default options or your globally set options.
+
+```ts
+import { defineConfig } from "astro/config"
+import compressor from "astro-compressor"
+import zlib from "node:zlib"
+
+export default defineConfig({
+	// ...
+	integrations: [
+		// ...,
+		compressor({
+			hooks: {
+				fileOptions: ({ filePath, format, logger }) => {
+					if (format === "gzip" && filePath.endsWith(".txt")) {
+						return { level: zlib.constants.Z_DEFAULT_COMPRESSION }
+					}
+				},
+			},
+		}),
+	],
+})
+```
+
+#### `postCompression`
+
+And finally, you can do a final decision on whether to keep a compressed file after it
+has been compressed. This can be useful if you want to avoid saving compressed files that
+are larger than the input, or only saving files that are compressed above a certain threshold.
+
+By default, it skips files that are compressed larger than the input.
+
+```ts
+import { defineConfig } from "astro/config"
+import compressor, { type HookResult } from "astro-compressor"
+
+export default defineConfig({
+	// ...
+	integrations: [
+		// ...,
+		compressor({
+			hooks: {
+				postCompression: ({ inputPath, inputSize, outputPath, outputSize, format, logger }): HookResult => {
+					if (outputSize >= inputSize) {
+						return "skip"
+					}
+				},
+			},
+		}),
+	],
+})
+```
 
 # License
 

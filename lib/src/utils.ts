@@ -3,12 +3,12 @@ import path from "node:path"
 
 import type { AstroIntegrationLogger } from "astro"
 
-import type { FileFilter } from "#/hooks.js"
+import type { FileFilterParams } from "#/hooks.js"
 
 export const findFiles = async (
 	root: string,
 	logger: AstroIntegrationLogger,
-	filter: (ctx: FileFilter) => boolean,
+	filter: (ctx: FileFilterParams) => boolean,
 ): Promise<Array<string>> => {
 	const entries = await fs.readdir(root, { withFileTypes: true, recursive: true })
 	const files = entries.filter((p) => filter({ entry: p, logger })).map((p) => path.join(p.parentPath, p.name))

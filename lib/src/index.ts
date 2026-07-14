@@ -11,13 +11,24 @@ import { Queue } from "#/queue.js"
 import { findFiles } from "#/utils.js"
 import { WorkerPool } from "#/worker-pool.js"
 
+export type {
+	Hooks,
+	FileFilterParams,
+	PreCompressionParams,
+	PostCompressionParams,
+	KeepOrSkip,
+	FileOptionsParams,
+} from "#/hooks.js"
+export { gzipDefaults, brotliDefaults, zstdDefaults } from "#/compressor.js"
+
 export interface Options {
-	/** Enable gzip compression */
+	/** Enable and/or configure gzip compression */
 	gzip?: boolean | ZlibOptions
-	/** Enable brotli compression */
+	/** Enable and/or configure brotli compression */
 	brotli?: boolean | BrotliOptions
-	/** Enable zstd compression */
+	/** Enable and/or configure zstd compression */
 	zstd?: boolean | ZstdOptions
+	/** Hooks are a way to influence what is compressed and how */
 	hooks?: Hooks
 	/**
 	 * Extensions to compress, must be in the format `.html`, `.css` etc
