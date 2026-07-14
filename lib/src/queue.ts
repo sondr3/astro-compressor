@@ -75,7 +75,7 @@ export class Queue {
 		const hook = this.hooks?.fileOptions?.[compressor.name]
 		if (typeof hook !== "function") return compressor.opts
 
-		const opts = await hook({ filePath: file, logger: this.logger, format: compressor.name })
+		const opts = await hook({ filePath: file, logger: this.logger })
 		return opts ?? compressor.opts
 	}
 }
