@@ -2,21 +2,20 @@ import { promises as fs } from "node:fs"
 
 import type { AstroIntegrationLogger } from "astro"
 
-import type { TaskResponse } from "#/compression-worker.js"
-import type { Compressor, OptionsMap } from "#/compressor.js"
-import type { Format, Options } from "#/index.js"
+import type { Compressor, Format, OptionsMap } from "#/compressor.js"
+import type { Options } from "#/index.js"
 import type { WorkerPool } from "#/worker-pool.js"
 
 export class Queue {
 	protected logger: AstroIntegrationLogger
-	protected readonly pool: WorkerPool<TaskResponse>
+	protected readonly pool: WorkerPool
 	protected readonly hooks?: Options["hooks"]
 	protected readonly compressors: Array<Compressor<Format>>
 
 	counter: Record<Format, number> = { brotli: 0, gzip: 0, zstd: 0 }
 
 	constructor(
-		pool: WorkerPool<TaskResponse>,
+		pool: WorkerPool,
 		compressors: Array<Compressor<Format>>,
 		logger: AstroIntegrationLogger,
 		hooks: Options["hooks"],

@@ -1,15 +1,14 @@
 import { parentPort } from "node:worker_threads"
 import zlib from "node:zlib"
 
-import type { OptionsMap } from "#/compressor.js"
-import type { Format } from "#/index.js"
+import type { Format, OptionsMap } from "#/compressor.js"
 
 type BaseTask = { file: string; source: ArrayBuffer }
 export type Task<N extends Format = Format> = {
 	[K in N]: BaseTask & { format: K; options: OptionsMap[K] }
 }[N]
 
-export interface TaskResponse {
+export interface CompressionResult {
 	file: string
 	format: Format
 	output: ArrayBuffer
