@@ -120,11 +120,13 @@ highly recommended if you want to use these due to the types.
 #### `fileFilter`
 
 This hook allows you to override which files are filtered out for further compression
-by filtering on things like the directory it's in or its extension and so on.
+by filtering on things like the directory it's in or its extension and so on. This returns
+the full path to each file.
 
 ```ts
 import { defineConfig } from "astro/config"
 import compressor from "astro-compressor"
+import path from "node:path"
 
 export default defineConfig({
 	// ...
@@ -132,8 +134,8 @@ export default defineConfig({
 		// ...,
 		compressor({
 			hooks: {
-				fileFilter: ({ entry, logger }): boolean => {
-					return entry.isFile() && entry.name === "foo.html"
+				fileFilter: ({ filePath, logger }): boolean => {
+					return path.basename(filePath) === "foo.html"
 				},
 			},
 		}),
