@@ -1,4 +1,3 @@
-import type { Dirent } from "node:fs"
 import path from "node:path"
 
 import type { AstroIntegrationLogger } from "astro"
@@ -12,13 +11,17 @@ export type HookResult = KeepOrSkip | Promise<KeepOrSkip | undefined> | undefine
 
 export const defaultFileExtensions = new Set([".css", ".js", ".html", ".xml", ".cjs", ".mjs", ".svg", ".txt"])
 
-export const defaultFileFilter = (extensions: Set<string>, entry: Dirent, logger: AstroIntegrationLogger): boolean => {
-	if (!extensions.has(path.extname(entry.name))) {
-		logger.debug(`skipping ${entry.name}`)
+export const defaultFileFilter = (
+	extensions: Set<string>,
+	filePath: string,
+	logger: AstroIntegrationLogger,
+): boolean => {
+	if (!extensions.has(path.extname(filePath))) {
+		logger.debug(`skipping ${filePath}`)
 		return false
 	}
 
-	logger.debug(`keeping ${entry.name}`)
+	logger.debug(`keeping ${filePath}`)
 	return true
 }
 
@@ -44,7 +47,7 @@ export interface PostCompressionParams {
 }
 
 export interface FileFilterParams {
-	entry: Dirent
+	filePath: string
 	logger: AstroIntegrationLogger
 }
 
@@ -52,9 +55,7 @@ export interface Hooks {
 	/**
 	 * This hook allows you to customize what files are included in the compression. By
 	 * default, it uses the 'defaultFileFilter' function with 'defaultFileExtensions' as the
-	 * filter.
-	 *
-	 * Remember to run `entry.isFile()` to avoid including directories.
+	 * filter, keeping only files with a certain set of extensions.
 	 */
 	fileFilter?: (ctx: FileFilterParams) => boolean
 	/**
@@ -93,8 +94,8 @@ export interface Hooks {
 }
 
 export const defaultHooks: ResolvedOptions["hooks"] = {
-	fileFilter: ({ entry, logger }): boolean => {
-		return entry.isFile() && defaultFileFilter(defaultFileExtensions, entry, logger)
+	fileFilter: ({ filePath, logger }): boolean => {
+		return defaultFileFilter(defaultFileExtensions, filePath, logger)
 	},
 	postCompression: async ({ inputPath, inputSize, outputPath, outputSize, format, logger }) => {
 		if (outputSize >= inputSize) {

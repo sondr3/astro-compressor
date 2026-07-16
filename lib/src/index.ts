@@ -81,7 +81,7 @@ export default function (opts?: Options): AstroIntegration {
 					options.hooks = {
 						...options.hooks,
 						fileFilter: (params): boolean => {
-							return defaultFileFilter(oldstensions, params.entry, params.logger)
+							return defaultFileFilter(oldstensions, params.filePath, params.logger)
 						},
 					}
 					logger.warn(`shimming 'fileFilter' hook with 'fileExtensions'`)
