@@ -177,7 +177,8 @@ This can also be used to debug issues with compressing.
 
 You may want to even override options on a file-by-file basis per format, which this
 hooks gives you the option to. By default, it is `undefined` and falls back to either
-the default options or your globally set options.
+the default options or your globally set options. The default options are exported as
+`gzipDefaults`, `brotliDefaults` and `zstdDefaults` respectively.
 
 Note that this hook is a bit awkward and slow as it'll run once per file per format, so
 it should only be used if you need and want full control of compression per file per format.
