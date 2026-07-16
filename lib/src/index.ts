@@ -57,7 +57,7 @@ const defaultOptions: ResolvedOptions = {
 }
 
 // oxlint-disable-next-line unicorn/no-anonymous-default-export, import/no-default-export
-export default function (opts: Options): AstroIntegration {
+export default function (opts?: Options): AstroIntegration {
 	const options: ResolvedOptions = { ...defaultOptions, ...opts, hooks: { ...defaultOptions.hooks, ...opts?.hooks } }
 
 	return {
