@@ -27,13 +27,15 @@
 		"README.md"
 	],
 	"type": "module",
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
 	"imports": {
 		"#/*": {
 			"types": "./src/*",
 			"default": "./dist/*"
 		}
+	},
+	"exports": {
+		"types": "./dist/index.d.ts",
+		"default": "./dist/index.js"
 	},
 	"scripts": {
 		"dev": "tsc --watch --incremental -p tsconfig.dev.json",
