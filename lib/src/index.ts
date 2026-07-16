@@ -16,10 +16,12 @@ export type {
 	FileFilterParams,
 	PreCompressionParams,
 	PostCompressionParams,
+	HookResult,
 	KeepOrSkip,
 	FileOptionsParams,
 } from "#/hooks.js"
 export { gzipDefaults, brotliDefaults, zstdDefaults } from "#/compressor.js"
+export { defaultFileFilter, defaultFileExtensions } from "#/hooks.js"
 
 export interface Options {
 	/** Enable and/or configure gzip compression */
