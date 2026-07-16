@@ -1,3 +1,30 @@
+## v2.0.0
+
+## Summary
+
+A complete, but backwards compatible rewrite of the internals of the library. The internal
+workflow has gone from a `Promise`-based main loop to a worker pool based main loop to offload
+compression to worker threads. This has yielded a ~2x performance increase. A hook-based system
+has also been added to give more flexibility and customizability should you need to hook into
+per-file, per-format options or ignoring files per format.
+
+## Performance
+
+The underlying machinery for compressing was changed from a `Promise`-based per-format x file
+main loop to a worker thread pool that offloads the compression from the main thread to workers
+while keeping IO on the main thread. The primary reason for this is that even with `Promise.all`
+the compressors are limited by the libuv threadpool size so you don't get unlimited concurreny.
+
+Based on the default `pnpm create astro@latest` setup with a `[n].astro` page generated
+a set amount of times, on my M1 Max machine the performance benchmark looks like this:
+
+| #num pages |     v1 |     v2 |     diff | speedup |
+| ---------: | -----: | -----: | -------: | ------: |
+|        100 |  553ms |  253ms |   -300ms |   2.19x |
+|       1000 |  5.33s |  2.31s |  -3.02ds |   2.31x |
+|       5000 | 25.77s | 11.00s | -14.77ds |   2.34x |
+|      10000 | 51.46s | 22.03s | -29.43ds |   2.34x |
+
 ## v1.3.0
 
 > 2026-03-04

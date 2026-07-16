@@ -1,11 +1,8 @@
 {
-	"extends": ["./tsconfig.base.json"],
+	"extends": ["./tsconfig.json"],
 	"compilerOptions": {
-		"noUncheckedSideEffectImports": true,
 		"declaration": true,
-		"declarationMap": true,
-		"rootDir": "./src",
-		"outDir": "dist"
+		"declarationMap": true
 	},
 	"include": ["src"],
 	"exclude": ["coverage", "node_modules", "dist", "test", "**/*.test.ts"]

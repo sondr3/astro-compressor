@@ -1,11 +1,11 @@
 {
-	"name": "astro-compressor-test",
+	"name": "astro-compressor-happy-path",
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
 		"dev": "astro dev",
 		"start": "astro dev",
-		"build": "astro build",
+		"build": "rm -rf dist/ && astro check && astro build",
 		"preview": "astro preview",
 		"astro": "astro"
 	},
@@ -13,6 +13,8 @@
 		"astro": "catalog:"
 	},
 	"devDependencies": {
-		"astro-compressor": "workspace:^"
+		"@astrojs/check": "0.9.9",
+		"astro-compressor": "workspace:^",
+		"typescript": "6.0.3"
 	}
 }
