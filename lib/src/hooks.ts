@@ -26,6 +26,7 @@ export const defaultFileFilter = (
 }
 
 export interface PreCompressionParams {
+	/** The fully resolved path to the file */
 	filePath: string
 	format: Format
 	logger: AstroIntegrationLogger
@@ -33,14 +34,19 @@ export interface PreCompressionParams {
 
 export type FileOptionsResult<N extends Format> = OptionsMap[N] | Promise<OptionsMap[N] | undefined> | undefined
 export interface FileOptionsParams {
+	/** The fully resolved path to the file */
 	filePath: string
 	logger: AstroIntegrationLogger
 }
 
 export interface PostCompressionParams {
+	/** The fully resolved path to the input file */
 	inputPath: string
+	/** The size of the input in bytes */
 	inputSize: number
+	/** The fully resolved path to the output file */
 	outputPath: string
+	/** The size of the output in bytes */
 	outputSize: number
 	format: Format
 	logger: AstroIntegrationLogger
