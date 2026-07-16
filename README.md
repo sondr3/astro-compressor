@@ -215,7 +215,8 @@ And finally, you can do a final decision on whether to keep a compressed file af
 has been compressed. This can be useful if you want to avoid saving compressed files that
 are larger than the input, or only saving files that are compressed above a certain threshold.
 
-By default, it skips files that are compressed larger than the input.
+By default, it skips files that are compressed larger than the input. The `inputSize` and `outputSize`
+parameters are in bytes.
 
 ```ts
 import { defineConfig } from "astro/config"
