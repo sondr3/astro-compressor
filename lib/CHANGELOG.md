@@ -1,5 +1,7 @@
 ## v2.0.0
 
+> 2026-09-14
+
 ## Summary
 
 A complete, but backwards compatible rewrite of the internals of the library. The internal
@@ -24,6 +26,89 @@ a set amount of times, on my M1 Max machine the performance benchmark looks like
 |       1000 |  5.33s |  2.31s |  -3.02ds |   2.31x |
 |       5000 | 25.77s | 11.00s | -14.77ds |   2.34x |
 |      10000 | 51.46s | 22.03s | -29.43ds |   2.34x |
+
+### Commits
+
+- [[`494ccd1`](https://github.com/sondr3/astro-compressor/commit/494ccd1)] Bump dependencies
+- [[`45e06b2`](https://github.com/sondr3/astro-compressor/commit/45e06b2)] Bump to v2.0.0-rc.1
+- [[`3d37c9e`](https://github.com/sondr3/astro-compressor/commit/3d37c9e)] Mention that 'inputSize' and 'outputSize' are in bytes
+- [[`f187610`](https://github.com/sondr3/astro-compressor/commit/f187610)] Use a resolved 'filePath: string' instead of Dirent in 'fileFilter'
+- [[`d839062`](https://github.com/sondr3/astro-compressor/commit/d839062)] Add missing exports, update README slightly
+- [[`acce808`](https://github.com/sondr3/astro-compressor/commit/acce808)] 'exports' field to handle exports properly
+- [[`06ad506`](https://github.com/sondr3/astro-compressor/commit/06ad506)] Bump to v2.0.0-rc.0
+- [[`3e0af97`](https://github.com/sondr3/astro-compressor/commit/3e0af97)] Use TS config in happy path tests to catch stuff like this
+- [[`462ea50`](https://github.com/sondr3/astro-compressor/commit/462ea50)] Whoops, allow user to pass no options again
+- [[`13e299f`](https://github.com/sondr3/astro-compressor/commit/13e299f)] Add some notes to the changelog
+- [[`cb2bf08`](https://github.com/sondr3/astro-compressor/commit/cb2bf08)] Re-enable only running CI against main or PRs
+- [[`74fdd35`](https://github.com/sondr3/astro-compressor/commit/74fdd35)] Fix fileOptions hook example
+- [[`31b2640`](https://github.com/sondr3/astro-compressor/commit/31b2640)] Bump to v2-beta
+- [[`feaab39`](https://github.com/sondr3/astro-compressor/commit/feaab39)] Whoops, forgot to type check
+- [[`e29efbe`](https://github.com/sondr3/astro-compressor/commit/e29efbe)] Refactor fileOptions hook due to types being useless
+- [[`19dcf94`](https://github.com/sondr3/astro-compressor/commit/19dcf94)] Update README and documentation
+- [[`62ba83b`](https://github.com/sondr3/astro-compressor/commit/62ba83b)] Move types around, rename and de-generify
+- [[`ece9588`](https://github.com/sondr3/astro-compressor/commit/ece9588)] Rename and refactor hooks
+- [[`00ea934`](https://github.com/sondr3/astro-compressor/commit/00ea934)] Continue, not return, whoops
+- [[`6682808`](https://github.com/sondr3/astro-compressor/commit/6682808)] Run all compressors per file instead of compressor x file
+- [[`5dba758`](https://github.com/sondr3/astro-compressor/commit/5dba758)] 'Order' compressors so tests still pass
+- [[`d67dc52`](https://github.com/sondr3/astro-compressor/commit/d67dc52)] Rework queueTask to a queue class, add back compressed counter
+- [[`62fe746`](https://github.com/sondr3/astro-compressor/commit/62fe746)] Correct log output for hook shimming, early return if all compressors disabled
+- [[`782bbb8`](https://github.com/sondr3/astro-compressor/commit/782bbb8)] Fix some crashes in WorkerPool
+- [[`49bbae7`](https://github.com/sondr3/astro-compressor/commit/49bbae7)] Experiment with worker threads for actual parallelism
+- [[`0925980`](https://github.com/sondr3/astro-compressor/commit/0925980)] Skip files with compressed extensions outright when finding files
+- [[`272a424`](https://github.com/sondr3/astro-compressor/commit/272a424)] Run tests only on source files, up timeout
+- [[`4c8a78f`](https://github.com/sondr3/astro-compressor/commit/4c8a78f)] Create a bunch more integration tests
+- [[`7906c3d`](https://github.com/sondr3/astro-compressor/commit/7906c3d)] Fix conditional access of deprecated options
+- [[`919ba42`](https://github.com/sondr3/astro-compressor/commit/919ba42)] Merge hook result type into one
+- [[`af8d248`](https://github.com/sondr3/astro-compressor/commit/af8d248)] Better handling of post compression hook
+- [[`35ad8ab`](https://github.com/sondr3/astro-compressor/commit/35ad8ab)] Always throw in try/catch in main code
+- [[`b9114f6`](https://github.com/sondr3/astro-compressor/commit/b9114f6)] Fix stray ' b' sneaking in file sizes
+- [[`364b1cb`](https://github.com/sondr3/astro-compressor/commit/364b1cb)] Handle pre compression hook with old 'fileExtensions'
+- [[`81089ce`](https://github.com/sondr3/astro-compressor/commit/81089ce)] Deep merge hooks in plugin init too
+- [[`fffd528`](https://github.com/sondr3/astro-compressor/commit/fffd528)] Filter out everything besides files, whoops
+- [[`b593b61`](https://github.com/sondr3/astro-compressor/commit/b593b61)] Set node version to v24
+- [[`40a97e3`](https://github.com/sondr3/astro-compressor/commit/40a97e3)] Initiate compressor when running to avoid zstd crashing on Node v22
+- [[`8985a29`](https://github.com/sondr3/astro-compressor/commit/8985a29)] Add back deprecated options with logging warnings
+- [[`5320a58`](https://github.com/sondr3/astro-compressor/commit/5320a58)] Add astro check to test build
+- [[`b5f7771`](https://github.com/sondr3/astro-compressor/commit/b5f7771)] Deep merge compressor options at construction
+- [[`ccae937`](https://github.com/sondr3/astro-compressor/commit/ccae937)] Swap back to per-compressor worker loops, slightly faster
+- [[`ffe5825`](https://github.com/sondr3/astro-compressor/commit/ffe5825)] Add logging for compressed files
+- [[`6de46cb`](https://github.com/sondr3/astro-compressor/commit/6de46cb)] Drop unused batchSize, old compress functions
+- [[`96445de`](https://github.com/sondr3/astro-compressor/commit/96445de)] Use a worker pool instead of batch sizes and such
+- [[`ed7d76c`](https://github.com/sondr3/astro-compressor/commit/ed7d76c)] Use worker to gather files, wrap in try/catch to avoid swallowing errors
+- [[`505cfe7`](https://github.com/sondr3/astro-compressor/commit/505cfe7)] Eh, just log everything in the worker constructor
+- [[`7f62d0b`](https://github.com/sondr3/astro-compressor/commit/7f62d0b)] Disable lint for overridden methods not using 'this'
+- [[`7d89972`](https://github.com/sondr3/astro-compressor/commit/7d89972)] Split things out into classes
+- [[`add3526`](https://github.com/sondr3/astro-compressor/commit/add3526)] Handle enabled formats better, log them
+- [[`a405a8e`](https://github.com/sondr3/astro-compressor/commit/a405a8e)] Fix #/foo imports
+- [[`5d3a1fe`](https://github.com/sondr3/astro-compressor/commit/5d3a1fe)] Minor beauty fix
+- [[`28d4344`](https://github.com/sondr3/astro-compressor/commit/28d4344)] Change hook return types, implement post hook
+- [[`cb2cd7f`](https://github.com/sondr3/astro-compressor/commit/cb2cd7f)] Initial WIP of hooks instead of extension based input filtering
+- [[`bff8ef3`](https://github.com/sondr3/astro-compressor/commit/bff8ef3)] Build package with dev for better feedback loop
+- [[`a31a466`](https://github.com/sondr3/astro-compressor/commit/a31a466)] Enable optional chaining
+- [[`992179d`](https://github.com/sondr3/astro-compressor/commit/992179d)] Fix output changing in pnpm v1 in the tests
+- [[`c76551d`](https://github.com/sondr3/astro-compressor/commit/c76551d)] Run CI on all push for now
+- [[`82595e4`](https://github.com/sondr3/astro-compressor/commit/82595e4)] Upgrade to pnpm v11
+- [[`aa79713`](https://github.com/sondr3/astro-compressor/commit/aa79713)] Lock down CI actions
+- [[`a3693b5`](https://github.com/sondr3/astro-compressor/commit/a3693b5)] Use my personal oxfmt/oxlint configs
+- [[`f9b6f6a`](https://github.com/sondr3/astro-compressor/commit/f9b6f6a)] Use fs.readdir directly instead of walkdir generator
+- [[`e9bc6d3`](https://github.com/sondr3/astro-compressor/commit/e9bc6d3)] Upgrade dependencies, refactor TS setup for v7
+- [[`56efc6c`](https://github.com/sondr3/astro-compressor/commit/56efc6c)] Bump pnpm/action-setup from 6.0.10 to 6.1.0
+- [[`90fe7ea`](https://github.com/sondr3/astro-compressor/commit/90fe7ea)] Bump pnpm/action-setup from 6.0.9 to 6.0.10
+- [[`8c02d43`](https://github.com/sondr3/astro-compressor/commit/8c02d43)] Bump actions/setup-node from 6 to 7
+- [[`75f7c30`](https://github.com/sondr3/astro-compressor/commit/75f7c30)] Bump actions/checkout from 6 to 7
+- [[`c7e7289`](https://github.com/sondr3/astro-compressor/commit/c7e7289)] Bump pnpm/action-setup from 6.0.8 to 6.0.9
+- [[`55d1ae6`](https://github.com/sondr3/astro-compressor/commit/55d1ae6)] Bump pnpm/action-setup from 6.0.7 to 6.0.8
+- [[`b9d01e3`](https://github.com/sondr3/astro-compressor/commit/b9d01e3)] Bump pnpm/action-setup from 6.0.5 to 6.0.7
+- [[`e66ea4c`](https://github.com/sondr3/astro-compressor/commit/e66ea4c)] Bump pnpm/action-setup from 6.0.4 to 6.0.5
+- [[`c12602a`](https://github.com/sondr3/astro-compressor/commit/c12602a)] Bump pnpm/action-setup from 6.0.3 to 6.0.4
+- [[`1f77ca3`](https://github.com/sondr3/astro-compressor/commit/1f77ca3)] Move CHANGELOG, link README to lib
+- [[`9e22030`](https://github.com/sondr3/astro-compressor/commit/9e22030)] Move everything to a monorepo to fix install issues
+- [[`49e4172`](https://github.com/sondr3/astro-compressor/commit/49e4172)] Bump pnpm to 10.33, fix approve builds error
+- [[`80543d4`](https://github.com/sondr3/astro-compressor/commit/80543d4)] Bump pnpm/action-setup from 5.0.0 to 6.0.3
+- [[`ec4fe52`](https://github.com/sondr3/astro-compressor/commit/ec4fe52)] Upgrade packages
+- [[`ced43e2`](https://github.com/sondr3/astro-compressor/commit/ced43e2)] Bump pnpm/action-setup from 4.4.0 to 5.0.0
+- [[`5581383`](https://github.com/sondr3/astro-compressor/commit/5581383)] Bump pnpm/action-setup from 4.3.0 to 4.4.0
+- [[`0fd3c65`](https://github.com/sondr3/astro-compressor/commit/0fd3c65)] Bump pnpm/action-setup from 4.2.0 to 4.3.0
 
 ## v1.3.0
 
