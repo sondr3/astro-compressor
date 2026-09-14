@@ -34,7 +34,8 @@ README when published... :facepalm:
 
 ### Commits
 
-- [[`ed94c95`](https://github.com/sondr3/astro-compressor)] Move README to lib, symlink in other direction
+- [[`1ea4829`](https://github.com/sondr3/astro-compressor/commit/1ea4829)] Add note about 2.0.1
+- [[`ed94c95`](https://github.com/sondr3/astro-compressor/commit/ed94c95)] Move README to lib, symlink in other direction
 - [[`494ccd1`](https://github.com/sondr3/astro-compressor/commit/494ccd1)] Bump dependencies
 - [[`45e06b2`](https://github.com/sondr3/astro-compressor/commit/45e06b2)] Bump to v2.0.0-rc.1
 - [[`3d37c9e`](https://github.com/sondr3/astro-compressor/commit/3d37c9e)] Mention that 'inputSize' and 'outputSize' are in bytes
