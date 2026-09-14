@@ -5,7 +5,7 @@ allowBuilds:
   esbuild: true
   lefthook: true
 catalog:
-  astro: 7.0.7
+  astro: 7.3.2
 ignoredBuiltDependencies:
   - sharp
 onlyBuiltDependencies:

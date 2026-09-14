@@ -44,10 +44,10 @@
 	},
 	"devDependencies": {
 		"@sondr3/tsconfig": "0.10.0",
-		"@types/node": "26.1.1",
+		"@types/node": "26.5.1",
 		"astro": "catalog:",
 		"typescript": "7.0.2",
-		"vitest": "4.1.10"
+		"vitest": "5.0.0"
 	},
 	"engines": {
 		"node": ">=24"
