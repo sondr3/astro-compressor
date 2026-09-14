@@ -1,4 +1,4 @@
-## v2.0.0
+## v2.0.1
 
 > 2026-09-14
 
@@ -27,8 +27,14 @@ a set amount of times, on my M1 Max machine the performance benchmark looks like
 |       5000 | 25.77s | 11.00s | -14.77ds |   2.34x |
 |      10000 | 51.46s | 22.03s | -29.43ds |   2.34x |
 
+### What happened to 2.0.0?
+
+I didn't realize `npm` does not publish symlinked files and thus the release had no
+README when published... :facepalm:
+
 ### Commits
 
+- [[`ed94c95`](https://github.com/sondr3/astro-compressor)] Move README to lib, symlink in other direction
 - [[`494ccd1`](https://github.com/sondr3/astro-compressor/commit/494ccd1)] Bump dependencies
 - [[`45e06b2`](https://github.com/sondr3/astro-compressor/commit/45e06b2)] Bump to v2.0.0-rc.1
 - [[`3d37c9e`](https://github.com/sondr3/astro-compressor/commit/3d37c9e)] Mention that 'inputSize' and 'outputSize' are in bytes
